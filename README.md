@@ -2,135 +2,85 @@
 
 ## 📋 Description du Projet
 
-Projet Python réalisé dans le cadre de la formation **3ème année IABD** à l'ESGI.
+Projet Python réalisé dans le cadre de la formation **3ème année IABD** à l'ESGI (2025).
 
-L'objectif de ce projet est de développer un programme permettant de **manipuler des données structurées** (chargement, sauvegarde, filtrage, tri et affichage) à partir de différents formats de fichiers.
+L'objectif est de créer un programme permettant de charger, sauvegarder, filtrer, trier et afficher des données structurées provenant de différents formats de fichiers.
 
 ## 🎯 Objectifs Pédagogiques
 
-Ce projet permet de mettre en pratique les compétences suivantes :
-- Manipulation de fichiers en Python (CSV, JSON, XML, YAML)
-- Traitement et analyse de données structurées
-- Conception d'algorithmes de filtrage et de tri
-- Calcul de statistiques sur des données
-- Développement d'une interface utilisateur
-- Architecture et organisation de code Python
+Ce projet vise à mettre en application les notions vues en cours de scripting Python :
+- Manipulation de fichiers et formats de données.
+- Traitement de structures de données (listes de dictionnaires).
+- Implémentation d'algorithmes de tri et de filtrage.
 
 ## 🗂️ Types de Données Supportées
 
-Le programme traite des données structurées sous forme de **liste de dictionnaires**, où chaque entrée possède les mêmes champs.
-
-### Structures de Données
-
-
-### Types de Valeurs Supportées
-- **Entiers** (int)
-- **Réels** (float)
-- **Chaînes de caractères** (str)
-- **Booléens** (bool)
+Les données sont considérées comme une série (tableau) de données structurées possédant les mêmes champs.
+Le programme supporte les types de valeurs suivants :
+- **Entiers**
+- **Réels**
+- **Chaînes de caractères**
+- **Booléens**
 - **Listes** de valeurs des types ci-dessus
 
 ## ⚙️ Fonctionnalités
 
-### 1. **Chargement et Sauvegarde**
-- ✅ **Formats obligatoires** : CSV, JSON
-- 🚀 **Formats bonus** : XML, YAML
+### 1. Chargement et Sauvegarde
+- **Obligatoire** : Formats CSV et JSON.
+- **Avancé (Bonus)** : Formats XML et YAML.
 
-### 2. **Statistiques**
-Affichage de la structure des données avec :
-- **Champs numériques** : minimum, maximum, moyenne
-- **Champs booléens** : pourcentage de vrai et de faux
-- **Champs listes** : statistiques sur la taille des listes (min, max, moyenne)
+### 2. Statistiques
+Le programme affiche la structure des données et des statistiques par champ :
+- **Nombres** : min, max, moyenne.
+- **Booléens** : pourcentage de vrai et de faux.
+- **Listes** : statistiques sur la taille des listes (min, max, moyenne).
 
-### 3. **Filtrage**
-#### Fonctionnalités de base :
-- Comparaison avec une valeur pour tous les types de champs
-- Pour les chaînes : ordre lexicographique
-- Pour les listes : comparaison du nombre d'éléments
+### 3. Filtrage
+Permet de ne garder qu'un sous-ensemble des données.
+- **Niveau de base** : Comparaison avec une valeur (ordre lexicographique pour les chaînes, nombre d'éléments pour les listes).
+- **Niveau avancé** :
+    - Chaînes : contient, commence/finit par.
+    - Listes : règles complexes (tous les éléments, min/max/moyenne).
+    - Comparaison entre deux champs.
+    - Comparaison avec des statistiques globales (ex: plus vieux que la moyenne).
+    - Combinaison de champs (ex: prix × quantité > seuil).
 
-#### Fonctionnalités avancées :
-- **Chaînes** : contient, commence par, finit par
-- **Listes** : règles complexes (tous les éléments, min/max/moyenne)
-- **Comparaison entre champs** (ex: prénom avant nom alphabétiquement)
-- **Comparaison avec statistiques globales** (ex: plus vieux que la moyenne)
-- **Combinaison de champs** (ex: valeur globale = prix × quantité)
+### 4. Tri
+- **Niveau de base** : Tri par la valeur d'un champ.
+- **Niveau avancé** : Tri sur une combinaison de champs ou tri multi-critères (ex: nom puis prénom).
 
-### 4. **Tri**
-#### Fonctionnalités de base :
-- Tri par valeur d'un champ
+### 5. Interface Utilisateur
+Le choix de l'interface est libre :
+- Ligne de commande
+- Menu
+- Interface graphique
+*La qualité et la facilité d'utilisation entrent en compte dans la notation.*
 
-#### Fonctionnalités avancées :
-- Tri par combinaison de champs (ex: valeur globale)
-- Tri multi-critères (ex: nom puis prénom)
-
-### 5. **Interface Utilisateur**
-Choix libre parmi :
-- Ligne de commande avec arguments
-- Menu interactif en console
-- Interface graphique (GUI)
-
-### 6. **Améliorations Possibles** 🌟
-- Historique des filtrages avec undo/redo
-- Ajout/suppression dynamique de champs
-
-## 📁 Structure du Projet
-
-```
-Projet Data Filter/
-├── main.ipynb          # Notebook de démonstration (non obligatoire)
-├── Students.py         # Script principal ou module
-├── data/               # Dossiers de données
-│   ├── students/       # Données d'étudiants
-│   │   ├── data.csv
-│   │   └── data.yml
-│   └── items/          # Données d'articles
-│       ├── data.csv
-│       └── data.yml
-├── documentation/      # Documentation du projet
-└── README.md          # Ce fichier
-```
+### 6. Améliorations (Bonus)
+- Historique des filtrages avec undo/redo.
+- Possibilité d'ajouter ou retirer des champs dynamiquement.
 
 ## 🚀 Exécution du Programme
 
-Le programme doit être un **script Python exécutable** en ligne de commande :
+Le programme est un script exécutable en console via l'interpréteur Python. Il ne dépend pas de Jupyter Notebook.
 
 ```bash
-python Students.py [arguments]
-```
-
-⚠️ **Important** : Le programme ne doit **pas** dépendre de Jupyter ou d'un environnement similaire.
+python run.py
+````
 
 ## 📊 Critères d'Évaluation
 
-### Pour avoir la moyenne (10/20) :
-- ✅ Chargement/Sauvegarde en CSV et JSON
-- ✅ Affichage des statistiques de base
-- ✅ Filtrage de base (comparaison avec une valeur)
-- ✅ Tri de base (par un champ)
-- ✅ Interface fonctionnelle
-- ✅ Code sans bugs majeurs
-- ✅ Bon découpage et organisation du code
+**Pour avoir la moyenne :**
+Réalisation convenable (sans bugs, bon découpage) des fonctionnalités de base (chargement/sauvegarde CSV/JSON, stats de base, filtrage simple, tri simple).
 
-### Pour aller au-delà (>10/20) :
-- 🚀 Support XML et YAML
-- 🚀 Filtrages avancés
-- 🚀 Tris multi-critères
-- 🚀 Interface utilisateur de qualité
-- 🚀 Historique undo/redo
-- 🚀 Gestion dynamique des champs
+**Pour avoir plus de la moyenne :**
+Ajout d'améliorations et fonctionnalités avancées (formats XML/YAML, filtres complexes, tris multi-critères, interface soignée, undo/redo, etc.).
 
-## 🛠️ Technologies Utilisées
+## 🛠️ Technologies
 
-- **Python 3.x**
-- Modules standards : `csv`, `json`
-- Modules optionnels : `xml`, `yaml`, `tkinter` (pour GUI), etc.
+  - **Langage** : Python
+  - **Modules** : Utilisation de modules standards (csv, json) et optionnels selon les besoins (xml, yaml, etc.).
 
-## 👨‍🎓 Informations
+-----
 
-- **Formation** : 3ème année IABD
-- **École** : ESGI
-- **Année** : 2025
-
----
-
-📝 **Note** : Ce README sera complété au fur et à mesure de l'avancement du projet avec les détails d'implémentation et les instructions d'utilisation spécifiques.
+*Basé sur le sujet [Projet data filter](./documentation/Sujet.pdf)*
