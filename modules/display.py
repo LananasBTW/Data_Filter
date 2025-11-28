@@ -91,7 +91,7 @@ def print_data(data, current_filepath):
             widths[col] = max(widths[col], len(valeur))
 
     # Un petit peu de PADDING
-    padding = 2
+    padding = 4
     for col in widths:
         widths[col] += padding
 
@@ -119,6 +119,9 @@ def print_data(data, current_filepath):
             valeur = str(ligne[col]) if col in ligne else ""
             if not valeur: valeur = ""
             # < : align left, ^ : centered, > : align right
-            row_str += f"{valeur:<{widths[col]}}|" 
+            if column_types[col] == "texte":
+                row_str += f"{' ' * (padding//2)}{valeur:<{widths[col] - padding//2}}|"
+            else:
+                row_str += f"{valeur:^{widths[col]}}|" 
         print(row_str)
     print(ligne_sep + "\n")
