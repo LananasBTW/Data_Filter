@@ -1,13 +1,11 @@
-import sys
-
-# On ajoute le dossier courant au path pour être sûr que les imports fonctionnent
-# sys.path.append(os.path.dirname(os.path.abspath(__file__)))
-
-from modules import file_manager as fm, filter, stats, sort, display
-
+import config
+from modules import file_manager as fm
+from modules import filter
+from modules import stats
+from modules import sort
+from modules import display
 
 def main():
-
     # Init
     data = []
     current_filepath = None
@@ -93,20 +91,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
-    # data = [
-    #     {"name": "Alice", "age": 30, "city": "New York"},
-    #     {"name": "Bob", "age": 25, "city": "Los Angeles"},
-    #     {"name": "Charlie", "age": 35, "city": "Chicago"}
-    # ]
-
-    # # Save data
-    # fm.save_data(data, "data/output/output.csv")
-    # fm.save_data(data, "data/output/output.json")
-
-    # # Load data
-    # data_csv = fm.load_data("data/output/output.csv")
-    # data_json = fm.load_data("data/output/output.json")
-    # print("\nEqual data loaded from CSV and JSON:", data_csv == data_json)
-    # print("\nLoaded CSV Data :", data_csv)
-    # print("\nLoaded JSON Data:", data_json, "\n")

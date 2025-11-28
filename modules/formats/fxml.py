@@ -1,4 +1,5 @@
 # import ????
+import config
 
 
 def load(path):
