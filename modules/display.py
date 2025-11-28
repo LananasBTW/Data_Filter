@@ -5,20 +5,20 @@ def clear():
 
 def type_to_str(value):
     if isinstance(value, bool):
-        return "booléen"
+        return "bool"
     elif isinstance(value, int):
-        return "entier"
+        return "int"
     elif isinstance(value, float):
-        return "décimal"
+        return "float"
     elif isinstance(value, str):
-        return "texte"
+        return "str"
     elif isinstance(value, list):
-        return "liste"
+        return "list"
     elif isinstance(value, dict):
-        return "dictionnaire"
+        return "dict"
     elif value is None:
-        return "nul"
-    return "inconnu"
+        return "None"
+    return "unknown"
 
 def welcome():
     print("\nBienvenue dans l'application Data Filter !\n")
