@@ -28,14 +28,14 @@ def main():
                     if new_data:
                         data = new_data
                         current_filepath = path
-                        print(f"✅ {len(data)} éléments chargés avec succès.")
+                        print(f"✅ {len(data)} éléments chargés avec succès.\n")
                     else:
-                        print("❌ Échec du chargement ou fichier vide.")
+                        print("❌ Échec du chargement ou fichier vide.\n")
 
                 # AFFICHAGE
                 case "2":
                     if not data:
-                        print("⚠️ Aucune donnée chargée. Veuillez charger un fichier d'abord.")
+                        print("⚠️ Aucune donnée chargée. Veuillez charger un fichier d'abord.\n")
                     else:
                         display.show_current_file(current_filepath, data)
                         display.print_data(data, current_filepath)
@@ -43,7 +43,7 @@ def main():
                 # STATISTIQUES
                 case "3":
                     if not data:
-                        print("⚠️ Aucune donnée chargée. Veuillez charger un fichier d'abord.")
+                        print("⚠️ Aucune donnée chargée. Veuillez charger un fichier d'abord.\n")
                     else:
                         report = stats.analyze_structure(data)
                         display.print_stats(report)
@@ -51,18 +51,18 @@ def main():
                 # FILTRAGE
                 case "4":
                     if not data:
-                        print("⚠️ Aucune donnée chargée. Veuillez charger un fichier d'abord.")
+                        print("⚠️ Aucune donnée chargée. Veuillez charger un fichier d'abord.\n")
                     else:
                         # Pas sur de faire comme ça mais à voir
                         champ, valeur = display.request_filter_criteria()
                         filtered_data = filter.filter_data(data, champ, valeur)
-                        print(f"Filtre appliqué. {len(filtered_data)} résultats conservés (sur {len(data)}).")
+                        print(f"Filtre appliqué. {len(filtered_data)} résultats conservés (sur {len(data)}).\n")
                         data = filtered_data
 
                 # TRI
                 case "5":
                     if not data:
-                        print("⚠️ Aucune donnée chargée. Veuillez charger un fichier d'abord.")
+                        print("⚠️ Aucune donnée chargée. Veuillez charger un fichier d'abord.\n")
                     else:
                         champ = display.request_sort_field()
                         data = sort.sort_data(data, champ)
@@ -71,22 +71,23 @@ def main():
                 # SAUVEGARDE
                 case "6":
                     if not data:
-                        print("⚠️ Rien à sauvegarder.")
+                        print("⚠️ Rien à sauvegarder.\n")
                     else:
                         path = display.request_file_path("sauvegarder")
-                        fm.save_data(data, path)
+                        output_path = fm.save_data(data, path)
+                        print(f"✅ Données sauvegardées dans : {output_path}\n")
 
                 # QUITTER
                 case "0":
                     print("👋 Au revoir !\n")
                     break
 
-                case _: print("❌ Choix invalide, veuillez réessayer.")
+                case _: print("❌ Choix invalide, veuillez réessayer.\n")
         
         except Exception as e:
-            print(f"\n❌ Une erreur est survenue : {e}")
+            print(f"❌ Une erreur est survenue : {e}\n")
 
-        input("\nAppuyez sur Entrée pour continuer...")
+        input("Appuyez sur Entrée pour continuer...")
 
 
 if __name__ == "__main__":

@@ -1,4 +1,5 @@
 import os
+import config
 
 def clear():
     os.system('cls' if os.name == 'nt' else 'clear')
@@ -47,6 +48,7 @@ def menu(current_filepath, data=None):
 
 def request_file_path(action: str):
     path = input(f"Veuillez entrer le chemin du fichier à {action} : ")
+    print()
     return path
 
 def print_data(data, current_filepath):
@@ -67,17 +69,40 @@ def print_data(data, current_filepath):
     # 2. Détermination des types des colonnes
     column_types = {}
     for col in columns:
-        # Prendre le type de la première valeur non-None trouvée
-        column_types[col] = "unknown"
+        # Collecter tous les types uniques trouvés dans cette colonne
+        base_types = set()
+        list_item_types = set()
+        
         for ligne in data:
             if col in ligne and ligne[col] is not None:
-                column_types[col] = type_to_str(ligne[col])
-                break
-        if column_types[col] == "list":
-            for ligne in data:
-                if col in ligne and isinstance(ligne[col], list) and len(ligne[col]) > 0:
-                    column_types[col] = f"list of {type_to_str(ligne[col][0])}"
-                    break
+                type_str = type_to_str(ligne[col])
+                if type_str == "list" and isinstance(ligne[col], list):
+                    base_types.add("list")
+                    # Collecter tous les types d'éléments dans la liste
+                    for item in ligne[col]:
+                        list_item_types.add(type_to_str(item))
+                else:
+                    base_types.add(type_str)
+        
+        # Construire la chaîne de types
+        type_parts = []
+        if "list" in base_types:
+            if list_item_types:
+                list_types_str = ",".join(sorted(list_item_types))
+                type_parts.append(f"list of {list_types_str}")
+            else:
+                type_parts.append("list")
+            # Ajouter les autres types non-list
+            other_types = sorted(base_types - {"list"})
+            type_parts.extend(other_types)
+        else:
+            type_parts = sorted(base_types)
+        
+        # Afficher tous les types séparés par " | "
+        if type_parts:
+            column_types[col] = " | ".join(type_parts)
+        else:
+            column_types[col] = "unknown"
 
     # 3. Calcul des largeurs de colonnes
     widths = {col: max(len(col), len(column_types[col])) for col in columns}
@@ -91,14 +116,13 @@ def print_data(data, current_filepath):
     
     for ligne in data:
         for col in columns:
-            valeur = str(ligne[col]) if col in ligne else ""
-            if not valeur: valeur = ""
-            widths[col] = max(widths[col], len(valeur))
+            value = str(ligne[col]) if col in ligne else ""
+            if not value: value = ""
+            widths[col] = max(widths[col], len(value))
 
     # Un petit peu de PADDING
-    padding = 4
     for col in widths:
-        widths[col] += padding
+        widths[col] += config.TAB_PADDING * 2
 
     # 3. Création des lignes de séparation (ex: +-------+--------+)
     ligne_sep = "+" + "+".join(["-" * widths[c] for c in columns]) + "+"
@@ -122,16 +146,15 @@ def print_data(data, current_filepath):
         row_str = "|"
         for col in columns:
             type = column_types[col].split()[0]
-            valeur = str(ligne[col]) if col in ligne else ""
-            
-            if type == "bool":
-                valeur = 1 if valeur.lower() in ["true", "1", "yes"] else 0
-            
+            value = ligne[col] if col in ligne else ""
+            value = 1 if value == True else 0 if value == False else value
+            value = str(value)
+
             # < : align left, ^ : centered, > : align right
             if type in ["bool", "int"]:
-                row_str += f"{' ' * (padding//2)}{valeur:^{widths[col] - padding//2}}|"
+                row_str += f"{' ' * (config.TAB_PADDING//2)}{value:^{widths[col] - config.TAB_PADDING//2}}|"
             else:
-                row_str += f"{' ' * (padding//2)}{valeur:<{widths[col] - padding//2}}|"
+                row_str += f"{' ' * (config.TAB_PADDING//2)}{value:<{widths[col] - config.TAB_PADDING//2}}|"
     
         print(row_str)
     

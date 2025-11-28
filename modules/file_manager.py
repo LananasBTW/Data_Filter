@@ -1,6 +1,11 @@
 import os
+import shutil
+import config
 from modules.formats import fcsv, fjson, fxml, fyml
 
+def cleanTmpDir():
+    if os.path.exists(config.TMP_DIR):
+        shutil.rmtree(config.TMP_DIR, ignore_errors=True)
 
 def load_data(path):
     if not path:
@@ -34,15 +39,29 @@ def save_data(data, path):
     
     if not isinstance(data, list) or not all(isinstance(item, dict) for item in data):
         raise ValueError("Data must be a list of dictionaries")
+
+    dir_path = os.path.dirname(path)
+    filename = os.path.basename(path)
+    name, extension = os.path.splitext(filename.lower())
     
-    # Create directory if it doesn't exist
-    os.makedirs(os.path.dirname(path), exist_ok=True)
-    
-    name, extension = os.path.splitext(path.lower())
+    if dir_path:
+        output_dir = os.path.join(config.OUTPUT_DIR, dir_path)
+        tmp_dir = os.path.join(config.TMP_DIR, dir_path)
+        os.makedirs(output_dir, exist_ok=True)
+        os.makedirs(tmp_dir, exist_ok=True)
+        name = os.path.join(dir_path, name)
+    else:
+        os.makedirs(config.OUTPUT_DIR, exist_ok=True)
+        os.makedirs(config.TMP_DIR, exist_ok=True)
 
     match extension:
-        case '.csv': fcsv.save(data, path)
-        case '.json': fjson.save(data, path)
-        case '.fxml': fxml.save(data, path)
-        case '.fyml': fyml.save(data, path)
-        case _: raise ValueError(f"Format de fichier non supporté: {extension}")
+        case '.csv': fcsv.save(data, name)
+        case '.json': fjson.save(data, name)
+        case '.fxml': fxml.save(data, name)
+        case '.fyml': fyml.save(data, name)
+        case _:
+            cleanTmpDir()
+            raise ValueError(f"Format de fichier non supporté: {extension}")
+    
+    cleanTmpDir()
+    return os.path.join(config.OUTPUT_DIR, filename)
