@@ -4,7 +4,11 @@ import csv
 def load(path):    
     with open(path, 'r') as f:
         reader = csv.DictReader(f)
-        return [row for row in reader]
+        data = [row for row in reader]
+    
+    # TODO: Convertir les types de données (tout est lu en str en CSV)
+    
+    return data
 
 
 def save(data, path):    

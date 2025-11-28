@@ -1,12 +1,7 @@
 import json
 
 
-def load(path):
-    if not path:
-        raise ValueError("Path cannot be empty")
-    if not isinstance(path, str):
-        raise ValueError("Path must be a string")
-    
+def load(path):    
     with open(path, 'r') as f:
         return json.load(f)
 
