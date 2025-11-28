@@ -1,13 +1,24 @@
 import csv
+import json
 
+def convert_value(value):
+    value = value.strip()
+
+    try:
+        value = json.loads(value)
+    except json.JSONDecodeError:
+        pass
+    return value
 
 def load(path):    
     with open(path, 'r') as f:
         reader = csv.DictReader(f)
         data = [row for row in reader]
     
-    # TODO: Convertir les types de données (tout est lu en str en CSV)
-    
+    for row in data:
+        for k, v in row.items():
+            row[k] = convert_value(v)
+
     return data
 
 
