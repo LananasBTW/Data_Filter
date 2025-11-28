@@ -10,14 +10,14 @@ def main():
 
     # Init
     data = []
-    current_file = None # Pour se souvenir du fichier ouvert
+    current_filepath = None
 
     while True:
 
         try:
             display.clear()
             display.welcome()
-            choice = display.menu(current_file, data)
+            choice = display.menu(current_filepath, data)
 
             match choice:
             
@@ -28,7 +28,7 @@ def main():
                     
                     if new_data:
                         data = new_data
-                        current_file = path
+                        current_filepath = path
                         print(f"✅ {len(data)} éléments chargés avec succès.")
                     else:
                         print("❌ Échec du chargement ou fichier vide.")
@@ -38,37 +38,32 @@ def main():
                     if not data:
                         print("⚠️ Aucune donnée chargée. Veuillez charger un fichier d'abord.")
                     else:
-                        display.show_current_file(current_file, data)
-                        display.print_data(data, current_file)
+                        display.show_current_file(current_filepath, data)
+                        display.print_data(data, current_filepath)
 
                 # STATISTIQUES
                 case "3":
                     if not data:
-                        print("⚠️ Aucune donnée chargée.")
+                        print("⚠️ Aucune donnée chargée. Veuillez charger un fichier d'abord.")
                     else:
-                        # Le main demande le calcul au module stats...
-                        rapport = stats.analyze_structure(data)
-                        # ... et demande l'display au module display
-                        display.print_stats(rapport)
+                        report = stats.analyze_structure(data)
+                        display.print_stats(report)
 
                 # FILTRAGE
                 case "4":
                     if not data:
-                        print("⚠️ Aucune donnée chargée.")
+                        print("⚠️ Aucune donnée chargée. Veuillez charger un fichier d'abord.")
                     else:
+                        # Pas sur de faire comme ça mais à voir
                         champ, valeur = display.request_filter_criteria()
-                        # On met à jour la variable 'data' avec la version filtrée
                         filtered_data = filter.filter_data(data, champ, valeur)
-                        
                         print(f"Filtre appliqué. {len(filtered_data)} résultats conservés (sur {len(data)}).")
-                        # Question UX : Veut-on écraser les données ou juste voir le résultat ?
-                        # Ici, on écrase pour continuer à travailler dessus.
                         data = filtered_data
 
                 # TRI
                 case "5":
                     if not data:
-                        print("⚠️ Aucune donnée chargée.")
+                        print("⚠️ Aucune donnée chargée. Veuillez charger un fichier d'abord.")
                     else:
                         champ = display.request_sort_field()
                         data = sort.sort_data(data, champ)

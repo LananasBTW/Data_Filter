@@ -23,16 +23,16 @@ def type_to_str(value):
 def welcome():
     print("\nBienvenue dans l'application Data Filter !\n")
 
-def show_current_file(current_file, data=None):
-    if not current_file or not data:
+def show_current_file(current_filepath, data=None):
+    if not current_filepath or not data:
         print("⚠️ Aucun fichier chargé.\n")
     else:
-        print(f"📂 Fichier actuel : {current_file}\n")
+        print(f"📂 Fichier actuel : {current_filepath}\n")
         print(f"📊 Nombre d'éléments : {len(data)}\n")
 
-def menu(current_file, data=None):
+def menu(current_filepath, data=None):
     print("[ Menu Principal ]\n")
-    show_current_file(current_file, data)
+    show_current_file(current_filepath, data)
     print("1. Charger des données")
     print("2. Afficher les données")
     print("3. Afficher les statistiques")
@@ -49,13 +49,13 @@ def request_file_path(action: str):
     path = input(f"Veuillez entrer le chemin du fichier à {action} : ")
     return path
 
-def print_data(data, current_file):
+def print_data(data, current_filepath):
     if not data:
         raise Exception("Aucune donnée à afficher.\n")
     
     clear()
     print("[ Données ]\n")
-    show_current_file(current_file, data)
+    show_current_file(current_filepath, data)
     
     # 1. Détermination des colonnes
     all_keys = set()
