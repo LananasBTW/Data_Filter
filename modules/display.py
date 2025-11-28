@@ -68,11 +68,16 @@ def print_data(data, current_filepath):
     column_types = {}
     for col in columns:
         # Prendre le type de la première valeur non-None trouvée
-        column_types[col] = "Inconnu"
+        column_types[col] = "unknown"
         for ligne in data:
             if col in ligne and ligne[col] is not None:
                 column_types[col] = type_to_str(ligne[col])
                 break
+        if column_types[col] == "list":
+            for ligne in data:
+                if col in ligne and isinstance(ligne[col], list) and len(ligne[col]) > 0:
+                    column_types[col] = f"list of {type_to_str(ligne[col][0])}"
+                    break
 
     # 3. Calcul des largeurs de colonnes
     widths = {col: max(len(col), len(column_types[col])) for col in columns}
@@ -116,12 +121,18 @@ def print_data(data, current_filepath):
     for ligne in data:
         row_str = "|"
         for col in columns:
+            type = column_types[col].split()[0]
             valeur = str(ligne[col]) if col in ligne else ""
-            if not valeur: valeur = ""
+            
+            if type == "bool":
+                valeur = 1 if valeur.lower() in ["true", "1", "yes"] else 0
+            
             # < : align left, ^ : centered, > : align right
-            if column_types[col] == "texte":
-                row_str += f"{' ' * (padding//2)}{valeur:<{widths[col] - padding//2}}|"
+            if type in ["bool", "int"]:
+                row_str += f"{' ' * (padding//2)}{valeur:^{widths[col] - padding//2}}|"
             else:
-                row_str += f"{valeur:^{widths[col]}}|" 
+                row_str += f"{' ' * (padding//2)}{valeur:<{widths[col] - padding//2}}|"
+    
         print(row_str)
+    
     print(ligne_sep + "\n")
