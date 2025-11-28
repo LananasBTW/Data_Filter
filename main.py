@@ -18,6 +18,7 @@ def main():
             display.clear()
             display.welcome()
             choice = display.menu(current_filepath, data)
+            if not choice: continue
 
             match choice:
             
