@@ -173,14 +173,14 @@ Alice,25,Paris
         """Test du chargement d'un fichier avec un format non supporté."""
         invalid_path = self.fixtures_dir / "invalid_format.txt"
         invalid_path.write_text("This is a test.", encoding='utf-8')
-        with self.assertRaises(FileNotFoundError):
+        with self.assertRaises(ValueError):
             file_manager.load_data(str(invalid_path))
     
     def test_load_no_format_file(self):
         """Test du chargement d'un fichier sans extension."""
         no_format_path = self.fixtures_dir / "invalid_format"
         no_format_path.write_text("This is a test.", encoding='utf-8')
-        with self.assertRaises(FileNotFoundError):
+        with self.assertRaises(ValueError):
             file_manager.load_data(str(no_format_path))
     
     def test_load_empty_path(self):
