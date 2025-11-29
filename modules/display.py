@@ -159,3 +159,161 @@ def print_data(data, current_filepath):
         print(row_str)
     
     print(ligne_sep + "\n")
+
+def request_filter_criteria(data=None):
+    """
+    Demande à l'utilisateur les critères de filtrage.
+    
+    Args:
+        data: Données actuelles (optionnel, pour afficher les champs disponibles)
+        
+    Returns:
+        tuple: (field, operator, value) ou (field, value) pour compatibilité
+    """
+    print("[ Filtrage des données ]\n")
+    
+    # Afficher les champs disponibles si des données sont fournies
+    if data and len(data) > 0:
+        available_fields = sorted(list(data[0].keys()))
+        print("Champs disponibles:", ", ".join(available_fields))
+        print()
+    
+    field = input("Entrez le nom du champ à filtrer : ").strip()
+    if not field:
+        return None, None, None
+    
+    print("\nOpérateurs disponibles:")
+    print("1. = (égal)")
+    print("2. != (différent)")
+    print("3. < (inférieur)")
+    print("4. > (supérieur)")
+    print("5. <= (inférieur ou égal)")
+    print("6. >= (supérieur ou égal)")
+    print("7. contains (contient - pour chaînes)")
+    print("8. starts_with (commence par - pour chaînes)")
+    print("9. ends_with (finit par - pour chaînes)")
+    
+    operator_choice = input("\nChoisissez un opérateur (1-9) : ").strip()
+    
+    operator_map = {
+        '1': '=',
+        '2': '!=',
+        '3': '<',
+        '4': '>',
+        '5': '<=',
+        '6': '>=',
+        '7': 'contains',
+        '8': 'starts_with',
+        '9': 'ends_with'
+    }
+    
+    operator = operator_map.get(operator_choice)
+    if not operator:
+        print("⚠️ Opérateur invalide, utilisation de '=' par défaut.")
+        operator = '='
+    
+    # Demander la valeur
+    value_str = input(f"Entrez la valeur de comparaison : ").strip()
+    
+    # Essayer de convertir la valeur selon le type
+    value = value_str
+    try:
+        # Essayer d'abord comme nombre entier
+        if '.' not in value_str:
+            value = int(value_str)
+        else:
+            value = float(value_str)
+    except ValueError:
+        # Essayer comme booléen
+        if value_str.lower() in ['true', 'vrai', '1', 'yes', 'oui']:
+            value = True
+        elif value_str.lower() in ['false', 'faux', '0', 'no', 'non']:
+            value = False
+        else:
+            # Garder comme chaîne
+            value = value_str
+    
+    print()
+    return field, operator, value
+
+def request_sort_field(data=None):
+    """
+    Demande à l'utilisateur le champ de tri.
+    
+    Args:
+        data: Données actuelles (optionnel, pour afficher les champs disponibles)
+        
+    Returns:
+        str: Nom du champ de tri
+    """
+    print("[ Tri des données ]\n")
+    
+    # Afficher les champs disponibles si des données sont fournies
+    if data and len(data) > 0:
+        available_fields = sorted(list(data[0].keys()))
+        print("Champs disponibles:", ", ".join(available_fields))
+        print()
+    
+    field = input("Entrez le nom du champ de tri : ").strip()
+    
+    if not field:
+        return None, False
+    
+    order = input("Ordre de tri (c)roissant ou (d)écroissant ? [c] : ").strip().lower()
+    reverse = order == 'd'
+    
+    print()
+    return field, reverse
+
+def print_stats(report):
+    """
+    Affiche les statistiques des données.
+    
+    Args:
+        report: Dictionnaire de statistiques généré par stats.analyze_structure()
+    """
+    if not report:
+        print("⚠️ Aucune statistique disponible.\n")
+        return
+    
+    clear()
+    print("[ Statistiques ]\n")
+    
+    for field, field_stats in sorted(report.items()):
+        print(f"📊 Champ: {field}")
+        print(f"   Type: {field_stats.get('type', 'unknown')}")
+        print(f"   Nombre de valeurs: {field_stats.get('count', 0)}")
+        
+        if field_stats.get('null_count', 0) > 0:
+            print(f"   Valeurs nulles: {field_stats.get('null_count', 0)}")
+        
+        field_type = field_stats.get('type')
+        
+        if field_type == 'number':
+            if 'min' in field_stats:
+                print(f"   Minimum: {field_stats['min']}")
+            if 'max' in field_stats:
+                print(f"   Maximum: {field_stats['max']}")
+            if 'mean' in field_stats:
+                print(f"   Moyenne: {field_stats['mean']:.2f}")
+        
+        elif field_type == 'bool':
+            if 'true_percentage' in field_stats:
+                print(f"   Vrai: {field_stats['true_count']} ({field_stats['true_percentage']:.1f}%)")
+            if 'false_percentage' in field_stats:
+                print(f"   Faux: {field_stats['false_count']} ({field_stats['false_percentage']:.1f}%)")
+        
+        elif field_type == 'list':
+            if 'list_size_min' in field_stats:
+                print(f"   Taille min: {field_stats['list_size_min']}")
+            if 'list_size_max' in field_stats:
+                print(f"   Taille max: {field_stats['list_size_max']}")
+            if 'list_size_mean' in field_stats:
+                print(f"   Taille moyenne: {field_stats['list_size_mean']:.2f}")
+        
+        elif field_type == 'str':
+            if 'sample_values' in field_stats and field_stats['sample_values']:
+                samples = ", ".join(field_stats['sample_values'][:3])
+                print(f"   Exemples: {samples}")
+        
+        print()

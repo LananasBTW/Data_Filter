@@ -53,20 +53,25 @@ def main():
                     if not data:
                         print("⚠️ Aucune donnée chargée. Veuillez charger un fichier d'abord.\n")
                     else:
-                        # Pas sur de faire comme ça mais à voir
-                        champ, valeur = display.request_filter_criteria()
-                        filtered_data = filter.filter_data(data, champ, valeur)
-                        print(f"Filtre appliqué. {len(filtered_data)} résultats conservés (sur {len(data)}).\n")
-                        data = filtered_data
+                        champ, operator, valeur = display.request_filter_criteria(data)
+                        if champ and operator is not None:
+                            filtered_data = filter.filter_data(data, champ, operator, valeur)
+                            print(f"✅ Filtre appliqué. {len(filtered_data)} résultats conservés (sur {len(data)}).\n")
+                            data = filtered_data
+                        else:
+                            print("❌ Filtrage annulé.\n")
 
                 # TRI
                 case "5":
                     if not data:
                         print("⚠️ Aucune donnée chargée. Veuillez charger un fichier d'abord.\n")
                     else:
-                        champ = display.request_sort_field()
-                        data = sort.sort_data(data, champ)
-                        print("✅ Données triées.")
+                        champ, reverse = display.request_sort_field(data)
+                        if champ:
+                            data = sort.sort_data(data, field=champ, reverse=reverse)
+                            print("✅ Données triées.")
+                        else:
+                            print("❌ Tri annulé.\n")
 
                 # SAUVEGARDE
                 case "6":
