@@ -31,18 +31,32 @@ def show_current_file(current_filepath, data=None):
         print(f"📂 Fichier actuel : {current_filepath}\n")
         print(f"📊 Nombre d'éléments : {len(data)}\n")
 
-def menu(current_filepath, data=None):
+def menu(current_filepath, data=None, history_info=None):
     print("[ Menu Principal ]\n")
     show_current_file(current_filepath, data)
+    
+    # Afficher l'état de l'historique si disponible
+    if history_info:
+        undo_status = "✓" if history_info['can_undo'] else "✗"
+        redo_status = "✓" if history_info['can_redo'] else "✗"
+        print(f"📜 Historique: Undo {undo_status} | Redo {redo_status}")
+        if history_info['current_description']:
+            print(f"   Dernière opération: {history_info['current_description']}")
+        print()
+    
     print("1. Charger des données")
     print("2. Afficher les données")
     print("3. Afficher les statistiques")
     print("4. Filtrer les données")
     print("5. Trier les données")
     print("6. Sauvegarder les données")
+    print("7. Filtres combinés (ET/OU)")
+    print("8. Gérer les champs (ajouter/supprimer/renommer)")
+    print("9. Annuler (Undo)")
+    print("A. Refaire (Redo)")
     print("0. Quitter")
     
-    choice = input("\nVeuillez entrer votre choix (1-6 ou 0): ")
+    choice = input("\nVeuillez entrer votre choix (1-9, A ou 0): ").strip().upper()
     print()
     return choice
 
@@ -317,3 +331,150 @@ def print_stats(report):
                 print(f"   Exemples: {samples}")
         
         print()
+
+def request_combined_filters(data=None):
+    """
+    Demande plusieurs critères de filtrage pour un filtre combiné.
+    
+    Args:
+        data: Données actuelles (optionnel)
+        
+    Returns:
+        tuple: (filters, logic) où filters est une liste de (field, operator, value)
+               et logic est 'AND' ou 'OR'
+    """
+    print("[ Filtres Combinés ]\n")
+    
+    if data and len(data) > 0:
+        available_fields = sorted(list(data[0].keys()))
+        print("Champs disponibles:", ", ".join(available_fields))
+        print()
+    
+    filters = []
+    
+    print("Entrez les critères de filtrage (laissez vide pour terminer):\n")
+    
+    while True:
+        print(f"Critère #{len(filters) + 1}:")
+        field = input("  Champ (ou vide pour terminer): ").strip()
+        if not field:
+            break
+        
+        print("\n  Opérateurs disponibles:")
+        print("  1. = (égal)")
+        print("  2. != (différent)")
+        print("  3. < (inférieur)")
+        print("  4. > (supérieur)")
+        print("  5. <= (inférieur ou égal)")
+        print("  6. >= (supérieur ou égal)")
+        print("  7. contains (contient)")
+        print("  8. starts_with (commence par)")
+        print("  9. ends_with (finit par)")
+        
+        operator_choice = input("\n  Choisissez un opérateur (1-9): ").strip()
+        
+        operator_map = {
+            '1': '=', '2': '!=', '3': '<', '4': '>', '5': '<=',
+            '6': '>=', '7': 'contains', '8': 'starts_with', '9': 'ends_with'
+        }
+        
+        operator = operator_map.get(operator_choice, '=')
+        
+        value_str = input("  Valeur de comparaison: ").strip()
+        
+        # Conversion de la valeur
+        value = value_str
+        try:
+            if '.' not in value_str:
+                value = int(value_str)
+            else:
+                value = float(value_str)
+        except ValueError:
+            if value_str.lower() in ['true', 'vrai', '1', 'yes', 'oui']:
+                value = True
+            elif value_str.lower() in ['false', 'faux', '0', 'no', 'non']:
+                value = False
+            else:
+                value = value_str
+        
+        filters.append((field, operator, value))
+        print(f"  ✅ Critère ajouté: {field} {operator} {value}\n")
+    
+    if not filters:
+        return None, None
+    
+    print("\nOpérateur logique:")
+    print("1. ET (AND) - tous les critères doivent être satisfaits")
+    print("2. OU (OR) - au moins un critère doit être satisfait")
+    
+    logic_choice = input("Choix (1-2) [1]: ").strip() or "1"
+    logic = 'AND' if logic_choice == '1' else 'OR'
+    
+    print()
+    return filters, logic
+
+def request_field_management(data=None):
+    """
+    Menu pour la gestion des champs.
+    
+    Args:
+        data: Données actuelles
+        
+    Returns:
+        tuple: (action, field_name, ...) selon l'action
+    """
+    print("[ Gestion des Champs ]\n")
+    
+    if data and len(data) > 0:
+        available_fields = sorted(list(data[0].keys()))
+        print("Champs actuels:", ", ".join(available_fields))
+        print()
+    
+    print("Actions disponibles:")
+    print("1. Ajouter un champ")
+    print("2. Supprimer un champ")
+    print("3. Renommer un champ")
+    print("0. Annuler")
+    
+    choice = input("\nChoisissez une action (1-3 ou 0): ").strip()
+    print()
+    
+    if choice == '1':
+        field_name = input("Nom du nouveau champ: ").strip()
+        if not field_name:
+            return None, None, None
+        
+        default_value_str = input("Valeur par défaut (laissez vide pour None): ").strip()
+        default_value = None
+        if default_value_str:
+            try:
+                if '.' not in default_value_str:
+                    default_value = int(default_value_str)
+                else:
+                    default_value = float(default_value_str)
+            except ValueError:
+                if default_value_str.lower() in ['true', 'vrai', '1', 'yes', 'oui']:
+                    default_value = True
+                elif default_value_str.lower() in ['false', 'faux', '0', 'no', 'non']:
+                    default_value = False
+                else:
+                    default_value = default_value_str
+        
+        return 'add', field_name, default_value
+    
+    elif choice == '2':
+        field_name = input("Nom du champ à supprimer: ").strip()
+        if not field_name:
+            return None, None, None
+        return 'remove', field_name, None
+    
+    elif choice == '3':
+        old_name = input("Ancien nom du champ: ").strip()
+        if not old_name:
+            return None, None, None
+        new_name = input("Nouveau nom du champ: ").strip()
+        if not new_name:
+            return None, None, None
+        return 'rename', old_name, new_name
+    
+    return None, None, None

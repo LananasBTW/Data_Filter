@@ -40,9 +40,22 @@
     * ✅ Conversion automatique des types de valeurs
     * ✅ Affichage des champs disponibles
 
-#### 4. Fonctionnalités Bonus 🔄 OPTIONNEL
-* ⏳ Historique des filtrages avec undo/redo (non implémenté)
-* ⏳ Ajout/retrait de champs dynamiquement (non implémenté)
+#### 4. Fonctionnalités Bonus ✅ IMPLÉMENTÉ
+* ✅ **Historique des filtrages avec undo/redo** : 
+    * Module `history.py` avec gestion complète de l'historique
+    * Undo/Redo pour toutes les opérations (filtres, tris, gestion de champs)
+    * Limite configurable (50 états par défaut)
+    * Sauvegarde des données originales
+* ✅ **Filtres combinés (ET/OU)** :
+    * Fonction `filter_combined()` dans `filter.py`
+    * Support de plusieurs critères avec opérateur logique AND ou OR
+    * Interface utilisateur pour saisir plusieurs critères
+* ✅ **Gestion dynamique des champs** :
+    * Module `field_manager.py` avec fonctions complètes
+    * Ajout de champs avec valeur par défaut
+    * Suppression de champs
+    * Renommage de champs
+    * Mise à jour conditionnelle de valeurs
 
 ---
 
@@ -62,6 +75,8 @@
 | **Tri** | `sort.py` | ✅ | Tri simple et multi-critères, gestion des None |
 | **Affichage** | `display.py` | ✅ | Tableau ASCII formaté, menus interactifs |
 | **Application principale** | `main.py` | ✅ | Boucle principale avec gestion d'erreurs |
+| **Historique** | `history.py` | ✅ | Gestion undo/redo avec sauvegarde d'états |
+| **Gestion de champs** | `field_manager.py` | ✅ | Ajout/suppression/renommage de champs |
 
 #### 🎯 Fonctionnalités Réalisées
 
@@ -79,6 +94,9 @@
 - ✅ Tri multi-critères
 - ✅ Filtrage par statistiques globales
 - ✅ Interface soignée avec tableaux formatés
+- ✅ **Historique avec undo/redo** (toutes les opérations)
+- ✅ **Filtres combinés** (ET/OU avec plusieurs critères)
+- ✅ **Gestion dynamique des champs** (ajout/suppression/renommage)
 
 #### 📝 Notes
 
@@ -89,8 +107,9 @@
 
 #### 🔄 Améliorations Futures (Optionnel)
 
-- Historique des opérations (undo/redo)
-- Filtres combinés avec opérateurs logiques (ET/OU)
+- ✅ ~~Historique des opérations (undo/redo)~~ **IMPLÉMENTÉ**
+- ✅ ~~Filtres combinés avec opérateurs logiques (ET/OU)~~ **IMPLÉMENTÉ**
+- ✅ ~~Gestion dynamique des champs~~ **IMPLÉMENTÉ**
 - Export vers d'autres formats (Excel, etc.)
-- Interface graphique (GUI)
 - Traitement de fichiers volumineux (streaming)
+- Sauvegarde/chargement de l'historique (persistance)

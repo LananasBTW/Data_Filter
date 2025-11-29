@@ -148,3 +148,47 @@ def filter_by_stats(data, field, operator, stat_type='mean'):
         return data
     
     return filter_data(data, field, operator, threshold)
+
+def filter_combined(data, filters, logic='AND'):
+    """
+    Applique plusieurs filtres avec opérateur logique ET ou OU.
+    
+    Args:
+        data: Liste de dictionnaires à filtrer
+        filters: Liste de tuples (field, operator, value)
+        logic: 'AND' pour ET (tous les filtres doivent être satisfaits)
+               'OR' pour OU (au moins un filtre doit être satisfait)
+        
+    Returns:
+        list: Liste filtrée de dictionnaires
+    """
+    if not data:
+        return []
+    
+    if not filters:
+        return data
+    
+    if logic.upper() == 'AND':
+        # Tous les filtres doivent être satisfaits
+        result = data
+        for field, operator, value in filters:
+            result = filter_data(result, field, operator, value)
+        return result
+    
+    elif logic.upper() == 'OR':
+        # Au moins un filtre doit être satisfait
+        result = []
+        matched_indices = set()
+        
+        for field, operator, value in filters:
+            filtered = filter_data(data, field, operator, value)
+            for i, row in enumerate(data):
+                if row in filtered and i not in matched_indices:
+                    result.append(row)
+                    matched_indices.add(i)
+        
+        return result
+    
+    else:
+        # Par défaut, utiliser AND
+        return filter_combined(data, filters, 'AND')
