@@ -1,5 +1,7 @@
 # Projet Data Filter
 
+[![Python package](https://github.com/LananasBTW/Data_Filter/actions/workflows/python-package.yml/badge.svg)](https://github.com/LananasBTW/Data_Filter/actions/workflows/python-package.yml)
+
 ## 📋 Description du Projet
 
 Projet Python réalisé dans le cadre de la formation **3ème année IABD** à l'ESGI (2025).
