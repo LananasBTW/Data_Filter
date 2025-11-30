@@ -1,5 +1,9 @@
 import config
 
+def isNumber(types):
+    types_set = set(types)
+    return types_set.issubset({"int", "float"}) and len(types_set) > 0
+
 def get_type_str(value):
     """Retourne le type sous forme de string lisible (int, str, list, etc.)"""
     if isinstance(value, bool): return "bool"
@@ -11,7 +15,7 @@ def get_type_str(value):
     if value is None: return "None"
     return "unknown"
 
-def get_all_columns(data):
+def get_all_fields(data):
     """Récupère la liste triée de toutes les clés uniques présentes dans les données."""
     if not data: return []
     all_keys = set()
@@ -24,7 +28,7 @@ def get_column_types(data):
     Détermine les types de données pour chaque colonne dans les données fournies.
     Retourne un dictionnaire où les clés sont les noms des colonnes et les valeurs sont des chaînes décrivant les types.
     """
-    columns = get_all_columns(data)
+    columns = get_all_fields(data)
     column_types = {}
     for col in columns:
         # Collecter tous les types uniques trouvés dans cette colonne

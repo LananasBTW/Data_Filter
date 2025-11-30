@@ -47,9 +47,9 @@ def print_data(data, current_filepath):
     clear()
     print("[ Données ]\n")
     show_current_file(current_filepath, data)
-    
+
     # 1. Détermination des colonnes
-    columns = utils.get_all_columns(data)
+    columns = utils.get_all_fields(data)
 
     # 2. Détermination des types des colonnes
     col_types = utils.get_column_types(data)
