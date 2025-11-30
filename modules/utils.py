@@ -1,8 +1,7 @@
 import config
 
-def isNumber(types):
-    types_set = set(types)
-    return types_set.issubset({"int", "float"}) and len(types_set) > 0
+def type_is_number(type: str):
+    return type in {"int", "float"}
 
 def get_type_str(value):
     """Retourne le type sous forme de string lisible (int, str, list, etc.)"""
