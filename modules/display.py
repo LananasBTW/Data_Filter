@@ -117,7 +117,7 @@ def print_data(data, current_filepath):
         row_str = "|"
         for col in columns:
             type = col_types_str[col].split()[0]
-            value = ligne[col] if col in ligne else ""
+            value = ligne[col] if col in ligne and ligne[col] is not None else ""
             value = 1 if value == True else 0 if value == False else value
             value = str(value)
 
@@ -130,3 +130,47 @@ def print_data(data, current_filepath):
         print(row_str)
     
     print(ligne_sep + "\n")
+
+def print_stats(report):
+    if not report:
+        print("⚠️ Aucune statistique disponible.\n")
+        return
+    
+    clear()
+    print("[ Statistiques des Données ]\n")
+    
+    for field, stats in report.items():
+        print(f"📊 Champ : {field}")
+        print(f"   • Valeurs non-nulles : {stats['non_null_count']}")
+        print(f"   • Valeurs nulles : {stats['null_count']}")
+        
+        if stats['type_stats']:
+            print(f"   • Types de données :")
+            
+            for data_type, type_stats in stats['type_stats'].items():
+                print(f"\n     [{data_type}]")
+                print(f"      - Nombre : {type_stats['count']}")
+                
+                if data_type == 'number':
+                    print(f"      - Min : {type_stats['min']}")
+                    print(f"      - Max : {type_stats['max']}")
+                    print(f"      - Moyenne : {type_stats['mean']:.2f}")
+                
+                elif data_type == 'bool':
+                    print(f"      - Vrai : {type_stats['true_count']} ({type_stats['true_percentage']:.1f}%)")
+                    print(f"      - Faux : {type_stats['false_count']} ({type_stats['false_percentage']:.1f}%)")
+                
+                elif data_type == 'str':
+                    print(f"      - Extrait : {', '.join(map(str, type_stats['sample_values']))}")
+                
+                elif data_type == 'list':
+                    print(f"      - Taille min : {type_stats['size_min']}")
+                    print(f"      - Taille max : {type_stats['size_max']}")
+                    print(f"      - Taille moyenne : {type_stats['size_mean']:.2f}")
+                
+                elif data_type == 'dict':
+                    print(f"      - Taille min : {type_stats['size_min']}")
+                    print(f"      - Taille max : {type_stats['size_max']}")
+                    print(f"      - Taille moyenne : {type_stats['size_mean']:.2f}")
+        
+        print()
