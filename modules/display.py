@@ -1,25 +1,12 @@
 import os
 import config
+import modules.utils as utils
 
 def clear():
     os.system('cls' if os.name == 'nt' else 'clear')
 
 def type_to_str(value):
-    if isinstance(value, bool):
-        return "bool"
-    elif isinstance(value, int):
-        return "int"
-    elif isinstance(value, float):
-        return "float"
-    elif isinstance(value, str):
-        return "str"
-    elif isinstance(value, list):
-        return "list"
-    elif isinstance(value, dict):
-        return "dict"
-    elif value is None:
-        return "None"
-    return "unknown"
+    return utils.get_type_str(value)
 
 def welcome():
     print("\nBienvenue dans l'application Data Filter !\n")
@@ -51,6 +38,8 @@ def request_file_path(action: str):
     print()
     return path
 
+
+
 def print_data(data, current_filepath):
     if not data:
         raise Exception("Aucune donnée à afficher.\n")
@@ -58,54 +47,36 @@ def print_data(data, current_filepath):
     clear()
     print("[ Données ]\n")
     show_current_file(current_filepath, data)
-    
-    # 1. Détermination des colonnes
-    all_keys = set()
-    for ligne in data:
-        all_keys.update(ligne.keys())
 
-    columns = sorted(list(all_keys))
+    # 1. Détermination des colonnes
+    columns = utils.get_all_fields(data)
 
     # 2. Détermination des types des colonnes
-    column_types = {}
-    for col in columns:
-        # Collecter tous les types uniques trouvés dans cette colonne
-        base_types = set()
-        list_item_types = set()
-        
-        for ligne in data:
-            if col in ligne and ligne[col] is not None:
-                type_str = type_to_str(ligne[col])
-                if type_str == "list" and isinstance(ligne[col], list):
-                    base_types.add("list")
-                    # Collecter tous les types d'éléments dans la liste
-                    for item in ligne[col]:
-                        list_item_types.add(type_to_str(item))
-                else:
-                    base_types.add(type_str)
-        
+    col_types = utils.get_column_types(data)
+    col_types_str = {}
+    for col, types in col_types.items():
         # Construire la chaîne de types
         type_parts = []
-        if "list" in base_types:
-            if list_item_types:
-                list_types_str = ",".join(sorted(list_item_types))
+        if "list" in types["base"]:
+            if types["sub"]:
+                list_types_str = ",".join(sorted(types["sub"]))
                 type_parts.append(f"list of {list_types_str}")
             else:
                 type_parts.append("list")
             # Ajouter les autres types non-list
-            other_types = sorted(base_types - {"list"})
+            other_types = sorted(types["base"] - {"list"})
             type_parts.extend(other_types)
         else:
-            type_parts = sorted(base_types)
+            type_parts = sorted(types["base"])
         
         # Afficher tous les types séparés par " | "
         if type_parts:
-            column_types[col] = " | ".join(type_parts)
+            col_types_str[col] = " | ".join(type_parts)
         else:
-            column_types[col] = "unknown"
+            col_types_str[col] = "unknown"
 
     # 3. Calcul des largeurs de colonnes
-    widths = {col: max(len(col), len(column_types[col])) for col in columns}
+    widths = {col: max(len(col), len(col_types_str[col])) for col in columns}
     for row in data:
         for col in columns:
             value = str(row[col]) if col in row else ""
@@ -136,7 +107,7 @@ def print_data(data, current_filepath):
     # 5. Affichage des types de données
     type_row = "|"
     for col in columns:
-        type_str = f"{column_types[col]}"
+        type_str = f"{col_types_str[col]}"
         type_row += f"{type_str:^{widths[col]}}|"
     print(type_row)
     print(ligne_sep)
@@ -145,8 +116,8 @@ def print_data(data, current_filepath):
     for ligne in data:
         row_str = "|"
         for col in columns:
-            type = column_types[col].split()[0]
-            value = ligne[col] if col in ligne else ""
+            type = col_types_str[col].split()[0]
+            value = ligne[col] if col in ligne and ligne[col] is not None else ""
             value = 1 if value == True else 0 if value == False else value
             value = str(value)
 
@@ -159,3 +130,47 @@ def print_data(data, current_filepath):
         print(row_str)
     
     print(ligne_sep + "\n")
+
+def print_stats(report):
+    if not report:
+        print("⚠️ Aucune statistique disponible.\n")
+        return
+    
+    clear()
+    print("[ Statistiques des Données ]\n")
+    
+    for field, stats in report.items():
+        print(f"📊 Champ : {field}")
+        print(f"   • Valeurs non-nulles : {stats['non_null_count']}")
+        print(f"   • Valeurs nulles : {stats['null_count']}")
+        
+        if stats['type_stats']:
+            print(f"   • Types de données :")
+            
+            for data_type, type_stats in stats['type_stats'].items():
+                print(f"\n     [{data_type}]")
+                print(f"      - Nombre : {type_stats['count']}")
+                
+                if data_type == 'number':
+                    print(f"      - Min : {type_stats['min']}")
+                    print(f"      - Max : {type_stats['max']}")
+                    print(f"      - Moyenne : {type_stats['mean']:.2f}")
+                
+                elif data_type == 'bool':
+                    print(f"      - Vrai : {type_stats['true_count']} ({type_stats['true_percentage']:.1f}%)")
+                    print(f"      - Faux : {type_stats['false_count']} ({type_stats['false_percentage']:.1f}%)")
+                
+                elif data_type == 'str':
+                    print(f"      - Extrait : {', '.join(map(str, type_stats['sample_values']))}")
+                
+                elif data_type == 'list':
+                    print(f"      - Taille min : {type_stats['size_min']}")
+                    print(f"      - Taille max : {type_stats['size_max']}")
+                    print(f"      - Taille moyenne : {type_stats['size_mean']:.2f}")
+                
+                elif data_type == 'dict':
+                    print(f"      - Taille min : {type_stats['size_min']}")
+                    print(f"      - Taille max : {type_stats['size_max']}")
+                    print(f"      - Taille moyenne : {type_stats['size_mean']:.2f}")
+        
+        print()
