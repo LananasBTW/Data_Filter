@@ -2,6 +2,12 @@
 
 [![Python package](https://github.com/LananasBTW/Data_Filter/actions/workflows/python-package.yml/badge.svg)](https://github.com/LananasBTW/Data_Filter/actions/workflows/python-package.yml)
 
+## LANCER LE PROJET :
+```pwsh
+pip install -r requirements.txt
+python main.py
+```
+
 ## 📋 Description du Projet
 
 Projet Python réalisé dans le cadre de la formation **3ème année IABD** à l'ESGI (2025).
