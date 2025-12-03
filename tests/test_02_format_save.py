@@ -163,6 +163,37 @@ class TestFormatSave(unittest.TestCase):
         
         self.assertEqual(len(loaded_data), len(self.test_data))
         self.assertEqual(loaded_data, self.test_data)
+    
+    # ========== Tests de cas spéciaux ==========
+    
+    def test_csv_save_inconsistent_fields(self):
+        """Test de la sauvegarde CSV avec des champs différents entre les lignes."""
+        inconsistent_data = [
+            {"F1": {"count": 3}, "F2": 12.5, "F5": True},
+            {"F3": ["count", 4], "F4": {"count": 1}, "F5": None},
+            {"F1": 16.67, "F2": "feur", "F5": True},
+            {"F5": False}
+        ]
+        
+        output_path = file_manager.save_data(inconsistent_data, "test_inconsistent.csv")
+        loaded_data = file_manager.load_data(output_path)
+        
+        # Vérifier que toutes les lignes sont présentes
+        self.assertEqual(len(loaded_data), 4)
+        
+        # Vérifier que les champs manquants sont None
+        self.assertIsNone(loaded_data[0].get('F3'))
+        self.assertIsNone(loaded_data[0].get('F4'))
+        self.assertIsNone(loaded_data[1].get('F1'))
+        self.assertIsNone(loaded_data[1].get('F2'))
+        self.assertIsNone(loaded_data[3].get('F1'))
+        
+        # Vérifier que les valeurs présentes sont correctes
+        self.assertEqual(loaded_data[0]['F1'], {"count": 3})
+        self.assertEqual(loaded_data[0]['F2'], 12.5)
+        self.assertTrue(loaded_data[0]['F5'])
+        self.assertFalse(loaded_data[3]['F5'])
 
 if __name__ == '__main__':
     unittest.main()
+
