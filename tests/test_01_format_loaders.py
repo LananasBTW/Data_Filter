@@ -76,6 +76,28 @@ Alice,25,Paris
         self.assertEqual(data[0]['tags'], ['tag1', 'tag2'])
         self.assertEqual(data[0]['score'], 99.5)
     
+    def test_csv_load_inconsistent_fields(self):
+        """Test du chargement de CSV avec des champs manquants dans certaines lignes."""
+        csv_path = self.fixtures_dir / "test_inconsistent.csv"
+        csv_content = """id,name,age,score
+1,Alice,25,
+2,Bob,,87.5
+3,Charlie,30,95.0"""
+        csv_path.write_text(csv_content, encoding='utf-8')
+        
+        data = file_manager.load_data(str(csv_path))
+        
+        self.assertEqual(len(data), 3)
+        # Les champs vides doivent être des strings vides ou convertis selon le contexte
+        self.assertEqual(data[0]['id'], 1)
+        self.assertEqual(data[0]['name'], 'Alice')
+        self.assertEqual(data[0]['age'], 25)
+        # Champ score vide
+        self.assertEqual(data[0]['score'], '')
+        
+        # Ligne avec age manquant
+        self.assertEqual(data[1]['age'], '')
+    
     # ========== Tests JSON - Structure ==========
     
     def test_json_load_structure(self):
