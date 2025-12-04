@@ -1,5 +1,7 @@
 output/*
 tmp/*
+data/output/*
+data/tmp/*
 tests/fixtures/*
 
 # Byte-compiled / optimized / DLL files
