@@ -2,14 +2,14 @@ import unittest
 import os
 import sys
 import json
+import shutil
 from pathlib import Path
 
 # Ajouter le répertoire parent au path pour les imports
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
-from modules import file_manager
+from modules import file_manager as fm
 import config
-
 
 class TestFormatSave(unittest.TestCase):
     """Tests unitaires pour vérifier la sauvegarde des différents formats de fichiers."""
@@ -17,8 +17,16 @@ class TestFormatSave(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         """Initialisation avant tous les tests."""
-        cls.output_dir = Path(config.OUTPUT_DIR)
-        cls.output_dir.mkdir(parents=True, exist_ok=True)
+        config.OUTPUT_DIR = str(Path(__file__).parent / "fixtures")
+        config.TMP_DIR = str(Path(__file__).parent / "tmp")
+        os.makedirs(config.OUTPUT_DIR, exist_ok=True)
+        os.makedirs(config.TMP_DIR, exist_ok=True)
+    
+    @classmethod
+    def tearDownClass(cls):
+        """Nettoyage après tous les tests."""
+        shutil.rmtree(config.OUTPUT_DIR, ignore_errors=True)
+        shutil.rmtree(config.TMP_DIR, ignore_errors=True)
         
     def setUp(self):
         """Initialisation avant chaque test."""
@@ -47,10 +55,10 @@ class TestFormatSave(unittest.TestCase):
     
     def test_json_save_and_reload_types(self):
         """Test que les types de données sont préservés lors de la sauvegarde et du rechargement JSON."""
-        output_path = file_manager.save_data(self.test_data, "test_types.json")
+        output_path = fm.save_data(self.test_data, "test_types.json")
         
         # Recharger les données
-        loaded_data = file_manager.load_data(output_path)
+        loaded_data = fm.load_data(output_path)
         
         # Vérifier que les types sont préservés
         self.assertIsInstance(loaded_data[0]['id'], int, "L'ID doit rester un entier")
@@ -83,8 +91,8 @@ class TestFormatSave(unittest.TestCase):
             }
         ]
         
-        output_path = file_manager.save_data(complex_data, "test_nested.json")
-        loaded_data = file_manager.load_data(output_path)
+        output_path = fm.save_data(complex_data, "test_nested.json")
+        loaded_data = fm.load_data(output_path)
         
         self.assertEqual(loaded_data[0]['nested']['level1']['level2']['value'], 42)
         self.assertIsInstance(loaded_data[0]['nested']['level1']['level2']['list'], list)
@@ -93,10 +101,10 @@ class TestFormatSave(unittest.TestCase):
     
     def test_csv_save_and_reload_types(self):
         """Test que les types de données sont préservés lors de la sauvegarde et du rechargement CSV."""
-        output_path = file_manager.save_data(self.test_data, "test_types.csv")
+        output_path = fm.save_data(self.test_data, "test_types.csv")
         
         # Recharger les données
-        loaded_data = file_manager.load_data(output_path)
+        loaded_data = fm.load_data(output_path)
         
         # Vérifier que les types sont préservés
         self.assertIsInstance(loaded_data[0]['id'], int, "L'ID doit rester un entier")
@@ -113,8 +121,8 @@ class TestFormatSave(unittest.TestCase):
     
     def test_csv_save_list_and_dict_conversion(self):
         """Test que les listes et dictionnaires sont correctement convertis en CSV."""
-        output_path = file_manager.save_data(self.test_data, "test_complex.csv")
-        loaded_data = file_manager.load_data(output_path)
+        output_path = fm.save_data(self.test_data, "test_complex.csv")
+        loaded_data = fm.load_data(output_path)
         
         # Vérifier que les listes sont correctement sérialisées et désérialisées
         self.assertEqual(loaded_data[0]['tags'], ["python", "data"])
@@ -129,37 +137,37 @@ class TestFormatSave(unittest.TestCase):
     def test_save_empty_data(self):
         """Test de la sauvegarde de données vides."""
         with self.assertRaises(ValueError):
-            file_manager.save_data([], "test_empty.json")
+            fm.save_data([], "test_empty.json")
     
     def test_save_invalid_data_format(self):
         """Test de la sauvegarde avec un format de données invalide."""
         with self.assertRaises(ValueError):
-            file_manager.save_data("not a list", "test_invalid.json")
+            fm.save_data("not a list", "test_invalid.json")
     
     def test_save_invalid_file_format(self):
         """Test de la sauvegarde avec une extension non supportée."""
         with self.assertRaises(ValueError):
-            file_manager.save_data(self.test_data, "test_invalid.txt")
+            fm.save_data(self.test_data, "test_invalid.txt")
     
     def test_save_empty_path(self):
         """Test de la sauvegarde avec un chemin vide."""
         with self.assertRaises(ValueError):
-            file_manager.save_data(self.test_data, "")
+            fm.save_data(self.test_data, "")
     
     # ========== Tests de round-trip (sauvegarde puis rechargement) ==========
     
     def test_json_roundtrip_preserves_all_data(self):
         """Test que toutes les données sont préservées dans un cycle sauvegarde/rechargement JSON."""
-        output_path = file_manager.save_data(self.test_data, "test_roundtrip.json")
-        loaded_data = file_manager.load_data(output_path)
+        output_path = fm.save_data(self.test_data, "test_roundtrip.json")
+        loaded_data = fm.load_data(output_path)
         
         self.assertEqual(len(loaded_data), len(self.test_data))
         self.assertEqual(loaded_data, self.test_data)
     
     def test_csv_roundtrip_preserves_all_data(self):
         """Test que toutes les données sont préservées dans un cycle sauvegarde/rechargement CSV."""
-        output_path = file_manager.save_data(self.test_data, "test_roundtrip.csv")
-        loaded_data = file_manager.load_data(output_path)
+        output_path = fm.save_data(self.test_data, "test_roundtrip.csv")
+        loaded_data = fm.load_data(output_path)
         
         self.assertEqual(len(loaded_data), len(self.test_data))
         self.assertEqual(loaded_data, self.test_data)
@@ -175,8 +183,8 @@ class TestFormatSave(unittest.TestCase):
             {"F5": False}
         ]
         
-        output_path = file_manager.save_data(inconsistent_data, "test_inconsistent.csv")
-        loaded_data = file_manager.load_data(output_path)
+        output_path = fm.save_data(inconsistent_data, "test_inconsistent.csv")
+        loaded_data = fm.load_data(output_path)
         
         # Vérifier que toutes les lignes sont présentes
         self.assertEqual(len(loaded_data), 4)
@@ -196,4 +204,3 @@ class TestFormatSave(unittest.TestCase):
 
 if __name__ == '__main__':
     unittest.main()
-

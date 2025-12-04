@@ -7,6 +7,6 @@ TAB_PADDING = 2
 
 DATA_DIR = os.path.join(CURRENT_PATH, "data/")
 OUTPUT_DIR = os.path.join(DATA_DIR, "output/")
-TMP_DIR = os.path.join(CURRENT_PATH, "tmp/")
+TMP_DIR = os.path.join(DATA_DIR, "tmp/")
 
 STATS_MAX_SAMPLE_VALUES = 3
