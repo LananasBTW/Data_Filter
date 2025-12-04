@@ -2,6 +2,8 @@
 
 [![Python package](https://github.com/LananasBTW/Data_Filter/actions/workflows/python-package.yml/badge.svg)](https://github.com/LananasBTW/Data_Filter/actions/workflows/python-package.yml)
 
+Lien vers le wiki : [LananasBTW/Data_Filter/wiki](https://github.com/LananasBTW/Data_Filter/wiki)
+
 ## LANCER LE PROJET :
 ```pwsh
 pip install -r requirements.txt
