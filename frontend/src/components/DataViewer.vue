@@ -1,14 +1,14 @@
 <script setup>
 import { ref, onMounted } from 'vue'
 
-const availableFiles = ref([])
-const selectedFile = ref('')
-const tableData = ref([])
-const statusMsg = ref('')
+const availableFiles = ref([])       
+const selectedFile = ref('')         
+const tableData = ref([])            
+const statusMsg = ref('En attente...') 
 
 const filterField = ref('')
 const filterValue = ref('')
-const saveFilename = ref('export.json')
+const saveFilename = ref('export_data.json')
 
 const statsReport = ref(null)
 const showStats = ref(false)
@@ -16,7 +16,7 @@ const showStats = ref(false)
 const API_URL = 'http://127.0.0.1:8000/api'
 
 async function apiCall(endpoint, payload = null, method = 'POST') {
-  statusMsg.value = "Chargement..."
+  statusMsg.value = "⏳ Traitement..."
   try {
     const options = {
       method: method,
@@ -25,14 +25,18 @@ async function apiCall(endpoint, payload = null, method = 'POST') {
     if (payload) options.body = JSON.stringify(payload)
 
     const response = await fetch(`${API_URL}/${endpoint}/`, options)
-    const data = await response.json()
     
+    if (!response.ok) {
+        throw new Error(`Erreur serveur (${response.status})`)
+    }
+
+    const data = await response.json()
     if (data.status === 'error') throw new Error(data.message)
     
-    statusMsg.value = "Succès !"
+    statusMsg.value = "✅ Succès"
     return data
   } catch (e) {
-    statusMsg.value = "Erreur : " + e.message
+    statusMsg.value = "❌ " + e.message
     console.error(e)
     return null
   }
@@ -40,7 +44,6 @@ async function apiCall(endpoint, payload = null, method = 'POST') {
 
 // --- Actions ---
 
-// 1. Récupérer la liste des fichiers
 async function fetchFiles() {
   const res = await apiCall('files', null, 'GET')
   if (res && res.files) {
@@ -49,29 +52,28 @@ async function fetchFiles() {
   }
 }
 
-// 2. Charger le fichier sélectionné
 async function loadData() {
   if (!selectedFile.value) return
-  statsReport.value = null // Reset stats
   showStats.value = false
+  statsReport.value = null
   const res = await apiCall('load', { path: selectedFile.value })
-  if (res) tableData.value = res.data
+  if (res) {
+      tableData.value = res.data
+      statusMsg.value = `✅ Chargé : ${res.count} lignes.`
+  }
 }
 
-// 3. Filtrer
 async function applyFilter() {
   const res = await apiCall('filter', { field: filterField.value, value: filterValue.value })
   if (res) tableData.value = res.data
 }
 
-// 4. Trier
 async function sortCol(colName) {
   const res = await apiCall('sort', { field: colName })
   if (res) tableData.value = res.data
 }
 
-// 5. Statistiques
-async function loadStats() {
+async function getStats() {
   const res = await apiCall('stats', null, 'GET')
   if (res) {
     statsReport.value = res.report
@@ -79,15 +81,11 @@ async function loadStats() {
   }
 }
 
-// 6. Sauvegarder
 async function saveFile() {
   const res = await apiCall('save', { path: saveFilename.value })
-  if (res) {
-    statusMsg.value = `Sauvegardé sous : ${res.path}`
-  }
+  if (res) statusMsg.value = `💾 Sauvegardé : ${res.path}`
 }
 
-// Initialisation
 onMounted(() => {
   fetchFiles()
 })
@@ -96,64 +94,54 @@ onMounted(() => {
 <template>
   <div class="viewer">
     <div class="header">
-      <h2>Data Filter UI</h2>
-      <p class="status">{{ statusMsg }}</p>
+        <h2>Data Filter UI</h2>
+        <span class="status-badge">{{ statusMsg }}</span>
     </div>
     
-    <div class="controls-container">
+    <div class="controls-wrapper">
       
       <div class="panel">
-        <h3>📂 Charger</h3>
-        <div class="row">
+        <h3>📂 Fichier</h3>
+        <div class="group">
           <select v-model="selectedFile">
-            <option disabled value="">Choisir un fichier</option>
-            <option v-for="file in availableFiles" :key="file" :value="file">
-              {{ file }}
-            </option>
+            <option disabled value="">-- Choisir --</option>
+            <option v-for="f in availableFiles" :key="f" :value="f">{{ f }}</option>
           </select>
           <button @click="loadData" class="btn-primary">Charger</button>
         </div>
       </div>
 
       <div class="panel">
-        <h3>🔍 Filtrer</h3>
-        <div class="row">
-          <input v-model="filterField" placeholder="Champ (ex: age)" />
-          <input v-model="filterValue" placeholder="Valeur (ex: 21)" />
-          <button @click="applyFilter">Go</button>
+        <h3>🔍 Filtre</h3>
+        <div class="group">
+          <input v-model="filterField" placeholder="Colonne" class="input-sm" />
+          <input v-model="filterValue" placeholder="Valeur" class="input-sm" />
+          <button @click="applyFilter">Filtrer</button>
         </div>
       </div>
 
       <div class="panel">
-        <h3>🛠️ Actions</h3>
-        <div class="row">
-          <button @click="loadStats" class="btn-info">📊 Stats</button>
-          <div class="save-group">
+        <h3>🛠️ Outils</h3>
+        <div class="group">
+          <button @click="getStats" class="btn-info">📊 Stats</button>
+          <div class="save-box">
             <input v-model="saveFilename" placeholder="Nom fichier" class="input-sm" />
-            <button @click="saveFile" class="btn-success">💾 Sauver</button>
+            <button @click="saveFile" class="btn-save">💾 Sauver</button>
           </div>
         </div>
       </div>
-
     </div>
 
-    <div v-if="showStats && statsReport" class="stats-box">
-      <h3>Rapport Statistique</h3>
-      <button class="close-btn" @click="showStats = false">Fermer</button>
+    <div v-if="showStats && statsReport" class="stats-container">
+      <div class="stats-header">
+        <h3>Statistiques</h3>
+        <button class="close-btn" @click="showStats = false">Fermer</button>
+      </div>
       <div class="stats-grid">
-        <div v-for="(stats, field) in statsReport" :key="field" class="stat-card">
+        <div v-for="(info, field) in statsReport" :key="field" class="stat-card">
           <h4>{{ field }}</h4>
-          <p>Non-null: <strong>{{ stats.non_null_count }}</strong></p>
-          <p>Null: <strong>{{ stats.null_count }}</strong></p>
-          <div v-for="(tInfo, tName) in stats.type_stats" :key="tName" class="type-info">
-             <span class="badge">{{ tName }}</span> : {{ tInfo.count }} items
-             <div v-if="tName === 'number'" class="details">
-               Moy: {{ tInfo.mean.toFixed(2) }} (Max: {{ tInfo.max }})
-             </div>
-             <div v-if="tName === 'bool'" class="details">
-               Vrai: {{ tInfo.true_percentage.toFixed(0) }}%
-             </div>
-          </div>
+          <div>Non-null: {{ info.non_null_count }}</div>
+          <div>Null: {{ info.null_count }}</div>
         </div>
       </div>
     </div>
@@ -163,7 +151,7 @@ onMounted(() => {
         <thead>
           <tr>
             <th v-for="(val, key) in tableData[0]" :key="key" @click="sortCol(key)">
-              {{ key }} <span class="sort-icon">↕</span>
+              {{ key }} ↕
             </th>
           </tr>
         </thead>
@@ -176,44 +164,39 @@ onMounted(() => {
         </tbody>
       </table>
     </div>
-    <div v-else class="empty-state">
-      Aucune donnée à afficher. Veuillez charger un fichier.
-    </div>
   </div>
 </template>
 
 <style scoped>
-.viewer { max-width: 1200px; margin: 0 auto; font-family: 'Segoe UI', sans-serif; }
-.header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; border-bottom: 1px solid #444; padding-bottom: 10px; }
-.status { color: #42b983; font-weight: bold; }
+.viewer { max-width: 1200px; margin: 0 auto; font-family: sans-serif; padding: 20px; }
+.header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; border-bottom: 2px solid #333; padding-bottom: 10px; }
+.status-badge { background: #333; padding: 5px 10px; border-radius: 4px; color: #42b983; font-weight: bold; }
 
-.controls-container { display: flex; gap: 20px; flex-wrap: wrap; margin-bottom: 20px; }
-.panel { background: #2a2a2a; padding: 15px; border-radius: 8px; flex: 1; min-width: 250px; display: flex; flex-direction: column; gap: 10px; }
-.panel h3 { margin: 0; font-size: 1rem; color: #aaa; }
-.row { display: flex; gap: 10px; align-items: center; }
+.controls-wrapper { display: flex; gap: 15px; flex-wrap: wrap; margin-bottom: 20px; }
+.panel { background: #222; padding: 15px; border-radius: 8px; flex: 1; min-width: 250px; border: 1px solid #444; }
+.panel h3 { margin: 0 0 10px 0; color: #aaa; font-size: 0.9em; text-transform: uppercase; }
 
-input, select { padding: 8px; border-radius: 4px; border: 1px solid #555; background: #1e1e1e; color: white; flex: 1; }
-button { padding: 8px 16px; border-radius: 4px; border: none; cursor: pointer; font-weight: bold; transition: opacity 0.2s; color: white; background: #444; }
-button:hover { opacity: 0.9; }
+.group { display: flex; gap: 10px; align-items: center; }
+.save-box { display: flex; gap: 5px; border-left: 1px solid #555; padding-left: 10px; margin-left: 5px; }
 
-.btn-primary { background-color: #646cff; }
-.btn-info { background-color: #0ea5e9; }
-.btn-success { background-color: #10b981; }
-.input-sm { max-width: 120px; }
+input, select, button { padding: 8px; border-radius: 4px; border: 1px solid #555; background: #333; color: white; }
+select { flex-grow: 1; }
+button { cursor: pointer; font-weight: bold; }
+button:hover { background: #444; }
 
-.stats-box { background: #1a1a1a; padding: 20px; border-radius: 8px; margin-bottom: 20px; border: 1px solid #333; position: relative; }
-.close-btn { position: absolute; top: 10px; right: 10px; background: #c0392b; font-size: 0.8rem; }
-.stats-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 15px; margin-top: 15px; }
-.stat-card { background: #333; padding: 10px; border-radius: 6px; font-size: 0.9rem; }
-.badge { background: #555; padding: 2px 6px; border-radius: 4px; font-size: 0.8rem; }
-.details { font-size: 0.8rem; color: #ccc; margin-left: 5px; margin-top: 2px;}
+.btn-primary { background: #646cff; border-color: #646cff; }
+.btn-info { background: #3498db; border-color: #3498db; }
+.btn-save { background: #27ae60; border-color: #27ae60; }
+.input-sm { width: 100px; }
 
-.table-container { overflow-x: auto; border-radius: 8px; border: 1px solid #444; }
+.stats-container { background: #2c3e50; padding: 15px; border-radius: 8px; margin-bottom: 20px; }
+.stats-header { display: flex; justify-content: space-between; margin-bottom: 10px; }
+.stats-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 10px; }
+.stat-card { background: #34495e; padding: 10px; border-radius: 5px; }
+
+.table-container { overflow-x: auto; border: 1px solid #444; border-radius: 8px; }
 table { width: 100%; border-collapse: collapse; background: #1e1e1e; }
-th, td { padding: 12px; text-align: left; border-bottom: 1px solid #333; }
-th { background: #252525; cursor: pointer; user-select: none; color: #ddd; }
+th, td { padding: 10px; text-align: left; border-bottom: 1px solid #333; }
+th { background: #252525; cursor: pointer; }
 th:hover { background: #333; }
-tr:hover { background: #2a2a2a; }
-.sort-icon { font-size: 0.8em; color: #666; }
-.empty-state { text-align: center; padding: 40px; color: #666; font-style: italic; }
 </style>

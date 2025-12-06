@@ -22,9 +22,8 @@ def list_files(request):
         return Response({"status": "success", "files": []})
     except Exception as e:
         return Response({"status": "error", "message": str(e)}, status=500)
-CURRENT_DATA = []
-CURRENT_FILEPATH = ""
-
+    
+    
 @api_view(['POST'])
 def load_file(request):
     global CURRENT_DATA, CURRENT_FILEPATH
