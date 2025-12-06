@@ -122,9 +122,8 @@ def preview_file(request):
             return Response({"status": "error", "message": "Fichier introuvable"}, status=404)
 
         preview_lines = []
-        # On lit juste les 10 premières lignes
         with open(full_path, 'r', encoding='utf-8') as f:
-            for _ in range(10):
+            for _ in range(5):
                 line = f.readline()
                 if not line: break
                 preview_lines.append(line)
