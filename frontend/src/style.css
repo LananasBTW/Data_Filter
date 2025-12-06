@@ -1,47 +1,14 @@
 :root {
-  font-family: 'Inter', system-ui, Avenir, Helvetica, Arial, sans-serif;
-  line-height: 1.6;
-  font-weight: 400;
-
-  --bg-app: #121212;
-  --bg-panel: #1e1e1e;
-  --bg-input: #2a2a2a;
-  --primary: #646cff;
-  --primary-hover: #747bff;
-  --text-main: rgba(255, 255, 255, 0.92);
-  --text-muted: rgba(255, 255, 255, 0.6);
-  --border: #333;
-  
   color-scheme: dark;
-  color: var(--text-main);
-  background-color: var(--bg-app);
 }
 
 body {
-  margin: 0;
-  display: flex;
-  min-width: 320px;
+  background-color: #212529;
+  color: #f8f9fa;
   min-height: 100vh;
-  background-color: var(--bg-app);
 }
 
-#app {
-  width: 100%;
-  margin: 0 auto;
-  padding: 2rem;
-}
-
-::-webkit-scrollbar {
-  width: 10px;
-  height: 10px;
-}
-::-webkit-scrollbar-track {
-  background: var(--bg-app); 
-}
-::-webkit-scrollbar-thumb {
-  background: #444; 
-  border-radius: 5px;
-}
-::-webkit-scrollbar-thumb:hover {
-  background: #555; 
-}
+::-webkit-scrollbar { width: 10px; }
+::-webkit-scrollbar-track { background: #212529; }
+::-webkit-scrollbar-thumb { background: #495057; border-radius: 5px; }
+::-webkit-scrollbar-thumb:hover { background: #6c757d; }

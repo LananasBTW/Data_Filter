@@ -115,7 +115,6 @@ def preview_file(request):
         return Response({"status": "error", "message": "Chemin vide"}, status=400)
     
     try:
-        # Construction du chemin complet
         full_path = os.path.join(config.DATA_DIR, path)
         
         if not os.path.exists(full_path):
