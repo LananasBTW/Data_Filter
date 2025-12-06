@@ -168,35 +168,135 @@ onMounted(() => {
 </template>
 
 <style scoped>
-.viewer { max-width: 1200px; margin: 0 auto; font-family: sans-serif; padding: 20px; }
-.header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; border-bottom: 2px solid #333; padding-bottom: 10px; }
-.status-badge { background: #333; padding: 5px 10px; border-radius: 4px; color: #42b983; font-weight: bold; }
+.viewer { 
+  max-width: 1200px; 
+  margin: 0 auto; 
+  font-family: sans-serif; 
+  padding: 20px; 
+}
+.header { 
+  display: flex; 
+  justify-content: space-between; 
+  align-items: center; 
+  margin-bottom: 20px; 
+  border-bottom: 2px solid #333; 
+  padding-bottom: 10px;
+}
+.status-badge { 
+  background: #333; 
+  padding: 5px 10px; 
+  border-radius: 4px; 
+  color: #42b983; 
+  font-weight: bold; 
+}
 
-.controls-wrapper { display: flex; gap: 15px; flex-wrap: wrap; margin-bottom: 20px; }
-.panel { background: #222; padding: 15px; border-radius: 8px; flex: 1; min-width: 250px; border: 1px solid #444; }
-.panel h3 { margin: 0 0 10px 0; color: #aaa; font-size: 0.9em; text-transform: uppercase; }
+.controls-wrapper { 
+  display: flex; 
+  gap: 15px; 
+  flex-wrap: wrap;
+   margin-bottom: 20px;
+}
+.panel { 
+  background: #222; 
+  padding: 15px; 
+  border-radius: 8px; 
+  flex: 1; 
+  min-width: 250px; 
+  border: 1px solid #444;
+}
+.panel h3 { 
+  margin: 0 0 10px 0; 
+  color: #aaa; 
+  font-size: 0.9em; 
+  text-transform: uppercase; 
+}
 
-.group { display: flex; gap: 10px; align-items: center; }
-.save-box { display: flex; gap: 5px; border-left: 1px solid #555; padding-left: 10px; margin-left: 5px; }
+.group { 
+  display: flex; 
+  gap: 10px; 
+  align-items: center;
+}
+.save-box { 
+  display: flex; 
+  gap: 5px; 
+  border-left: 1px solid #555; 
+  padding-left: 10px; 
+  margin-left: 5px;
+}
 
-input, select, button { padding: 8px; border-radius: 4px; border: 1px solid #555; background: #333; color: white; }
-select { flex-grow: 1; }
-button { cursor: pointer; font-weight: bold; }
-button:hover { background: #444; }
+input, select, button { 
+  padding: 8px; 
+  border-radius: 4px; 
+  border: 1px solid #555; 
+  background: #333; 
+  color: white; 
+}
+select { 
+  flex-grow: 1; 
+}
+button { 
+  cursor: pointer; 
+  font-weight: bold; 
+}
+button:hover { 
+  background: #444; 
+}
 
-.btn-primary { background: #646cff; border-color: #646cff; }
-.btn-info { background: #3498db; border-color: #3498db; }
-.btn-save { background: #27ae60; border-color: #27ae60; }
-.input-sm { width: 100px; }
+.btn-primary { 
+  background: #646cff; 
+  border-color: #646cff;
+}
+.btn-info { 
+  background: #3498db; 
+  border-color: #3498db; 
+}
+.btn-save { background: #27ae60;
+   border-color: #27ae60;
+}
 
-.stats-container { background: #2c3e50; padding: 15px; border-radius: 8px; margin-bottom: 20px; }
-.stats-header { display: flex; justify-content: space-between; margin-bottom: 10px; }
-.stats-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 10px; }
-.stat-card { background: #34495e; padding: 10px; border-radius: 5px; }
+.input-sm {
+   width: 100px; 
+}
 
-.table-container { overflow-x: auto; border: 1px solid #444; border-radius: 8px; }
-table { width: 100%; border-collapse: collapse; background: #1e1e1e; }
-th, td { padding: 10px; text-align: left; border-bottom: 1px solid #333; }
-th { background: #252525; cursor: pointer; }
-th:hover { background: #333; }
+.stats-container { 
+  background: #2c3e50; 
+  padding: 15px; border-radius: 
+  8px; margin-bottom: 20px; 
+}
+.stats-header { display: flex; 
+  justify-content: space-between; 
+  margin-bottom: 10px; 
+}
+.stats-grid { display: grid; 
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: 10px; 
+}
+.stat-card { 
+  background: #34495e;
+  padding: 10px; 
+  border-radius: 5px; 
+}
+
+.table-container { 
+  overflow-x: auto; 
+  border: 1px solid #444; 
+  border-radius: 8px; 
+}
+table { 
+  width: 100%; 
+  border-collapse: collapse; 
+  background: #1e1e1e; 
+}
+th, td { 
+  padding: 10px; 
+  text-align: left; 
+  border-bottom: 1px solid #333; 
+}
+th { 
+  background: #252525; 
+  cursor: pointer; 
+}
+th:hover { 
+  background: #333; 
+  }
 </style>
