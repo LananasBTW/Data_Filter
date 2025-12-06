@@ -281,8 +281,8 @@ onMounted(() => fetchFiles())
       </div>
     </div>
 
-    <transition name="slide-up">
-        <div v-if="showToast" class="toast" :class="toastType">
+<transition name="slide-up">
+        <div v-if="showToast" class="app-toast" :class="toastType">
             {{ toastMsg }}
         </div>
     </transition>
@@ -657,8 +657,7 @@ tr:hover td {
         transform: rotate(360deg);
     }
 }
-
-.toast {
+.app-toast {
     position: fixed;
     bottom: 20px;
     right: 20px;
@@ -670,15 +669,15 @@ tr:hover td {
     z-index: 100;
 }
 
-.toast.success {
+.app-toast.success {
     background: #10b981;
 }
 
-.toast.error {
+.app-toast.error {
     background: #ef4444;
 }
 
-.toast.info {
+.app-toast.info {
     background: #3b82f6;
 }
 
