@@ -105,3 +105,33 @@ def save_file(request):
         return Response({"status": "success", "path": output_path})
     except Exception as e:
         return Response({"status": "error", "message": str(e)}, status=400)
+    
+@api_view(['POST'])
+def preview_file(request):
+    """Renvoie les 10 premières lignes du fichier brut pour prévisualisation"""
+    path = request.data.get('path')
+    
+    if not path:
+        return Response({"status": "error", "message": "Chemin vide"}, status=400)
+    
+    try:
+        # Construction du chemin complet
+        full_path = os.path.join(config.DATA_DIR, path)
+        
+        if not os.path.exists(full_path):
+            return Response({"status": "error", "message": "Fichier introuvable"}, status=404)
+
+        preview_lines = []
+        # On lit juste les 10 premières lignes
+        with open(full_path, 'r', encoding='utf-8') as f:
+            for _ in range(10):
+                line = f.readline()
+                if not line: break
+                preview_lines.append(line)
+                
+        return Response({
+            "status": "success", 
+            "preview": "".join(preview_lines)
+        })
+    except Exception as e:
+        return Response({"status": "error", "message": str(e)}, status=400)

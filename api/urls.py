@@ -10,4 +10,5 @@ urlpatterns = [
     path('filter/', views.filter_data, name='filter_data'),
     path('sort/', views.sort_data, name='sort_data'),
     path('stats/', views.get_stats, name='get_stats'),
+    path('preview/', views.preview_file, name='preview_file'),
 ]

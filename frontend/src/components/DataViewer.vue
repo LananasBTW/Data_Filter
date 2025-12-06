@@ -81,6 +81,16 @@ async function getStats() {
   }
 }
 
+async function getPreview() {
+    if (!selectedFile.value) return
+    filePreview.value = "Chargement de l'aperçu..."
+    
+    const res = await apiCall('preview', { path: selectedFile.value })
+    if (res) {
+        filePreview.value = res.preview
+    }
+}
+
 async function saveFile() {
   const res = await apiCall('save', { path: saveFilename.value })
   if (res) statusMsg.value = `💾 Sauvegardé : ${res.path}`
@@ -103,11 +113,16 @@ onMounted(() => {
       <div class="panel">
         <h3>📂 Fichier</h3>
         <div class="group">
-          <select v-model="selectedFile">
+          <select v-model="selectedFile" @change="getPreview">
             <option disabled value="">-- Choisir --</option>
             <option v-for="f in availableFiles" :key="f" :value="f">{{ f }}</option>
           </select>
           <button @click="loadData" class="btn-primary">Charger</button>
+        </div>
+        
+        <div v-if="filePreview" class="preview-box">
+            <h4>Aperçu du fichier (10 premières lignes) :</h4>
+            <pre>{{ filePreview }}</pre>
         </div>
       </div>
 
@@ -188,6 +203,24 @@ onMounted(() => {
   border-radius: 4px; 
   color: #42b983; 
   font-weight: bold; 
+}
+
+.preview-box {
+    margin-top: 15px;
+    background: #111;
+    padding: 10px;
+    border-radius: 4px;
+    border: 1px dashed #555;
+}
+.preview-box h4 { margin: 0 0 5px 0; font-size: 0.8em; color: #888; }
+.preview-box pre {
+    margin: 0;
+    font-size: 0.8em;
+    color: #ccc;
+    white-space: pre-wrap;
+    max-height: 150px;
+    overflow-y: auto;
+    font-family: monospace;
 }
 
 .controls-wrapper { 
