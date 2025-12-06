@@ -1,0 +1,9 @@
+firstname,lastname,age,apprentice,grades
+Alice,Dupont,21,true,"[15,17,14]"
+Bob,Martin,23,false,"[8,9,11,10]"
+Charlie,Durand,20,true,"[12,12,13]"
+Diana,Leroy,22,false,"[18,19,20,17,18]"
+Evan,Moreau,25,true,"[10,11]"
+Fanny,Petit,21,false,"[14,13,15,14]"
+Gilles,Lefebvre,24,true,"[9,8,10]"
+Helene,Roux,22,false,"[16,15,17]"

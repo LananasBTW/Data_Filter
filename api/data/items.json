@@ -1,0 +1,62 @@
+[
+  {
+    "name": "Laptop Dell",
+    "category": "Informatique",
+    "price": 999.99,
+    "quantity": 5
+  },
+  {
+    "name": "Souris Logitech",
+    "category": "Périphérique",
+    "price": 25.50,
+    "quantity": 50
+  },
+  {
+    "name": "Clavier Mécanique",
+    "category": "Périphérique",
+    "price": 89.90,
+    "quantity": 20
+  },
+  {
+    "name": "Ecran Samsung",
+    "category": "Informatique",
+    "price": 199.00,
+    "quantity": 10
+  },
+  {
+    "name": "Cable HDMI",
+    "category": "Accessoire",
+    "price": 15.00,
+    "quantity": 100
+  },
+  {
+    "name": "Disque Dur Externe",
+    "category": "Stockage",
+    "price": 85.50,
+    "quantity": 15
+  },
+  {
+    "name": "Clé USB 64Go",
+    "category": "Stockage",
+    "price": 12.00,
+    "quantity": 40
+  },
+  {
+    "name": "Casque Audio",
+    "category": "Audio",
+    "price": 59.99,
+    "quantity": 25
+  },
+  {
+    "name": "Enceinte Bluetooth",
+    "category": "Audio",
+    "price": 45.00,
+    "quantity": 30
+  },
+  {
+    "name": "Chargeur USB-C",
+    "category": "Accessoire",
+    "price": 29.99,
+    "quantity": 60
+  }
+]

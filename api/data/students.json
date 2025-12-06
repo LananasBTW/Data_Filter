@@ -1,0 +1,58 @@
+[
+  {
+    "firstname": "Alice",
+    "lastname": "Dupont",
+    "age": 21,
+    "apprentice": true,
+    "grades": [15, 17, 14]
+  },
+  {
+    "firstname": "Bob",
+    "lastname": "Martin",
+    "age": 23,
+    "apprentice": false,
+    "grades": [8, 9, 11, 10]
+  },
+  {
+    "firstname": "Charlie",
+    "lastname": "Durand",
+    "age": 20,
+    "apprentice": true,
+    "grades": [12, 12, 13]
+  },
+  {
+    "firstname": "Diana",
+    "lastname": "Leroy",
+    "age": 22,
+    "apprentice": false,
+    "grades": [18, 19, 20, 17, 18]
+  },
+  {
+    "firstname": "Evan",
+    "lastname": "Moreau",
+    "age": 25,
+    "apprentice": true,
+    "grades": [10, 11]
+  },
+  {
+    "firstname": "Fanny",
+    "lastname": "Petit",
+    "age": 21,
+    "apprentice": false,
+    "grades": [14, 13, 15, 14]
+  },
+  {
+    "firstname": "Gilles",
+    "lastname": "Lefebvre",
+    "age": 24,
+    "apprentice": true,
+    "grades": [9, 8, 10]
+  },
+  {
+    "firstname": "Helene",
+    "lastname": "Roux",
+    "age": 22,
+    "apprentice": false,
+    "grades": [16, 15, 17]
+  }
+]

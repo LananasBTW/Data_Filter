@@ -1,0 +1,20 @@
+[
+  {
+    "F1" : {"count": 3, "percentage": 60.0},
+    "F2" : 12.5,
+    "F5" : true
+  },
+  {
+    "F3" : ["count", 4, "percentage", 80.0],
+    "F4" : {"count": 1, "percentage": 20.0},
+    "F5" : null
+  },
+  {
+    "F1" : 16.67,
+    "F2" : "feur",
+    "F5" : true
+  },
+  {
+    "F5" : false
+  }
+]
