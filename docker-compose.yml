@@ -8,8 +8,8 @@ services:
     container_name: datafilter-backend
     restart: unless-stopped
     build:
-      context: docker/backend/
-      dockerfile: Dockerfile
+      context: ./
+      dockerfile: Dockerfile-backend
     image: datafilter-backend:latest
     # ports:
     #   - "8000:8000"
@@ -23,8 +23,8 @@ services:
     container_name: datafilter-frontend
     restart: unless-stopped
     build:
-      context: docker/frontend/
-      dockerfile: Dockerfile
+      context: ./
+      dockerfile: Dockerfile-frontend
     image: datafilter-frontend:latest
     # ports:
     #   - "5173:5173"
