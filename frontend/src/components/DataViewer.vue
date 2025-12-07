@@ -28,7 +28,7 @@ const toastMsg = ref('')
 const toastType = ref('')
 const showToast = ref(false)
 
-const API_URL = 'http://127.0.0.1:8000/api'
+const API_URL = 'https://api.ptitgourmand.uk/datafilter/'
 
 // --- Computed  ---
 const totalPages = computed(() => Math.ceil(tableData.value.length / pageSize.value))
