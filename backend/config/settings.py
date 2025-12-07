@@ -25,11 +25,13 @@ SECRET_KEY = 'django-insecure-qsa%6xc*o5-id-alitkn+tu*i_2pb3qvrxf3_%2$6to-vtck3m
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
-
+ALLOWED_HOSTS = [
+    'api.ptitgourmand.uk',
+    'datafilter-backend',
+    'localhost',
+]
 
 # Application definition
-
 
 INSTALLED_APPS = [
     'django.contrib.admin',
