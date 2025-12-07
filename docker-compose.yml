@@ -13,8 +13,8 @@ services:
     image: datafilter-backend:latest
     # ports:
     #   - "8000:8000"
-    volumes:
-      - ./backend/datafilter/data:/app/datafilter/data
+    # volumes:
+    #   - ./data:/app/datafilter/data
     networks:
       - default
       - cloudflared_proxy
