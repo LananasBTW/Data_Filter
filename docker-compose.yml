@@ -1,33 +1,35 @@
-networks:
-  cloudflared_proxy:
-    external: true
+# networks:
+#   cloudflared_proxy:
+#     external: true
 
 services:
 
   backend:
-    container_name: datafilter-backend
+    container_name: datafilter-backend-dev
     restart: unless-stopped
     build:
       context: ./
       dockerfile: Dockerfile-backend
-    image: datafilter-backend:latest
-    # ports:
-    #   - "8000:8000"
-    # volumes:
-    #   - ./data:/app/datafilter/data
+    image: datafilter-backend:dev
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./data_output:/app/datafilter/data/output
     networks:
       - default
-      - cloudflared_proxy
+      # - cloudflared_proxy
 
   frontend:
-    container_name: datafilter-frontend
+    container_name: datafilter-frontend-dev
     restart: unless-stopped
     build:
       context: ./
       dockerfile: Dockerfile-frontend
-    image: datafilter-frontend:latest
-    # ports:
-    #   - "5173:5173"
+    image: datafilter-frontend:dev
+    environment:
+      - VITE_API_URL=http://localhost:8000/datafilter
+    ports:
+      - "5173:5173"
     networks:
       - default
-      - cloudflared_proxy
+      # - cloudflared_proxy

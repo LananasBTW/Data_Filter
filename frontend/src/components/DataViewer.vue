@@ -5,7 +5,7 @@ import StatsPanel from './dashboard/StatsPanel.vue'
 import DataTable from './dashboard/DataTable.vue'
 
 // --- CONFIG & STATE ---
-const API_URL = 'https://api.ptitgourmand.uk/datafilter'
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000/datafilter'
 
 const availableFiles = ref([])       
 const tableData = ref([])            

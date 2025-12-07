@@ -29,6 +29,7 @@ ALLOWED_HOSTS = [
     'api.ptitgourmand.uk',
     'datafilter-backend',
     'localhost',
+    '127.0.0.1'
 ]
 
 # Application definition
@@ -49,7 +50,11 @@ CORS_ALLOWED_ORIGINS = [
     "http://datafilter-backend:8000",
     "https://api.ptitgourmand.uk",
     "http://datafilter-frontend:5173",
-    "https://datafilter.ptitgourmand.uk"
+    "https://datafilter.ptitgourmand.uk",
+    "http://localhost:5173",
+    "http://localhost:8000",
+    "http://127.0.0.1:5173",
+    "http://127.0.0.1:8000",
 ]
 
 MIDDLEWARE = [
