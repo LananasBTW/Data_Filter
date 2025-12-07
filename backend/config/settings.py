@@ -44,6 +44,8 @@ INSTALLED_APPS = [
 ]
 
 CORS_ALLOWED_ORIGINS = [
+    "http://datafilter-backend:8000",
+    "https://api.ptitgourmand.uk",
     "http://datafilter-frontend:5173",
     "https://datafilter.ptitgourmand.uk"
 ]
