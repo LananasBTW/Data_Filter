@@ -14,7 +14,7 @@ services:
     # ports:
     #   - "8000:8000"
     volumes:
-      - ./backend/api/data:/app/api/data
+      - ./backend/datafilter/data:/app/datafilter/data
     networks:
       - default
       - cloudflared_proxy
