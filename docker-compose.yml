@@ -11,8 +11,8 @@ services:
       context: docker/backend/
       dockerfile: Dockerfile
     image: datafilter-backend:latest
-    ports:
-      - "8000:8000"
+    # ports:
+    #   - "8000:8000"
     volumes:
       - ./backend/api/data:/app/api/data
     networks:
@@ -27,7 +27,7 @@ services:
       dockerfile: Dockerfile
     image: datafilter-frontend:latest
     # ports:
-    #   - "8080:80"
+    #   - "5173:5173"
     networks:
       - default
       - cloudflared_proxy
