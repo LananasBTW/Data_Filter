@@ -1,0 +1,33 @@
+networks:
+  cloudflared_proxy:
+    external: true
+
+services:
+
+  backend:
+    container_name: datafilter-backend
+    restart: unless-stopped
+    build:
+      context: docker/backend/
+      dockerfile: Dockerfile
+    image: datafilter-backend:latest
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./backend/api/data:/app/api/data
+    networks:
+      - default
+      - cloudflared_proxy
+
+  frontend:
+    container_name: datafilter-frontend
+    restart: unless-stopped
+    build:
+      context: docker/frontend/
+      dockerfile: Dockerfile
+    image: datafilter-frontend:latest
+    # ports:
+    #   - "8080:80"
+    networks:
+      - default
+      - cloudflared_proxy
