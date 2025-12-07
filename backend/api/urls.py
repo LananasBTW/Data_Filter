@@ -1,7 +1,7 @@
 from django.urls import path
 from . import views
 
-app_name = 'api'
+app_name = 'datafilter'
 
 urlpatterns = [
     path('files/', views.list_files, name='list_files'),

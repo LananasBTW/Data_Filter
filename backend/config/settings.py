@@ -44,7 +44,8 @@ INSTALLED_APPS = [
 ]
 
 CORS_ALLOWED_ORIGINS = [
-    "http://datafilter-frontend:5173"
+    "http://datafilter-frontend:5173/",
+    "https://datafilter.ptitgourmand.uk/"
 ]
 
 MIDDLEWARE = [
