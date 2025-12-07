@@ -48,26 +48,51 @@ function triggerToast(msg, type = 'success') {
 function renderChart() {
     if (chartInstance) chartInstance.destroy()
     const ctx = document.getElementById('statsChart')
-    if (!ctx) return
+    if (!ctx || !statsReport.value) return
 
-    const firstField = Object.keys(statsReport.value)[0]
-    const info = statsReport.value[firstField]
+    // --- CORRECTION : Calcul des sommes globales ---
+    let totalNonNull = 0
+    let totalNull = 0
+
+    // On parcourt tous les champs pour additionner les stats
+    Object.values(statsReport.value).forEach(stats => {
+        totalNonNull += stats.non_null_count
+        totalNull += stats.null_count
+    })
 
     chartInstance = new Chart(ctx, {
         type: 'doughnut',
         data: {
-            labels: ['Valide', 'Null'],
+            labels: ['Données Valides', 'Données Nulles'],
             datasets: [{
-                data: [info.non_null_count, info.null_count],
+                data: [totalNonNull, totalNull],
                 backgroundColor: ['#10b981', '#ef4444'],
-                borderWidth: 0
+                borderWidth: 0,
+                hoverOffset: 4
             }]
         },
         options: {
             responsive: true,
             maintainAspectRatio: false,
             plugins: {
-                legend: { position: 'right', labels: { color: '#aaa', font: { size: 10 } } }
+                legend: { 
+                    position: 'bottom', 
+                    labels: { color: '#ccc', padding: 20, font: { size: 12 } } 
+                },
+                tooltip: {
+                    callbacks: {
+                        label: function(context) {
+                            let label = context.label || '';
+                            if (label) {
+                                label += ': ';
+                            }
+                            let value = context.raw;
+                            let total = context.chart._metasets[context.datasetIndex].total;
+                            let percentage = Math.round((value / total) * 100) + '%';
+                            return label + value + ' (' + percentage + ')';
+                        }
+                    }
+                }
             }
         }
     })
@@ -228,16 +253,65 @@ onMounted(() => fetchFiles())
                     <h3>Analyse & Graphique</h3>
                     <button class="btn-icon" @click="showStats = false">✕</button>
                 </div>
+                
                 <div class="stats-content-wrapper">
-                    <div class="chart-container">
-                        <canvas id="statsChart"></canvas>
+                    
+                    <div class="stats-top-section">
+                        <div class="chart-container-large">
+                            <canvas id="statsChart"></canvas>
+                        </div>
+                        <div class="chart-legend-large">
+                            <p>Qualité globale des données (Totalité des champs)</p>
+                        </div>
                     </div>
-                    <div class="stats-grid">
-                        <div v-for="(info, field) in statsReport" :key="field" class="stat-item">
-                            <div class="stat-title">{{ field }}</div>
-                            <div class="stat-metrics">
-                                <span class="metric valid">{{ info.non_null_count }} <small>ok</small></span>
-                                <span class="metric null" v-if="info.null_count > 0">{{ info.null_count }} <small>null</small></span>
+
+                    <div class="divider-full"></div>
+
+                    <div class="fields-grid-full">
+                        <div v-for="(stats, fieldName) in statsReport" :key="fieldName" class="field-card">
+                            
+                            <div class="field-header">
+                                <span class="field-name">{{ fieldName }}</span>
+                                <div class="field-badges">
+                                    <span class="badge badge-success">{{ stats.non_null_count }} ok</span>
+                                    <span v-if="stats.null_count > 0" class="badge badge-danger">{{ stats.null_count }} null</span>
+                                </div>
+                            </div>
+
+                            <div class="types-container">
+                                <div v-for="(typeData, typeName) in stats.type_stats" :key="typeName" class="type-block">
+                                    <div class="type-label">{{ typeName }} <small>({{ typeData.count }})</small></div>
+
+                                    <div v-if="typeName === 'number'" class="stat-row">
+                                        <div class="mini-stat"><span>Min</span><strong>{{ typeData.min }}</strong></div>
+                                        <div class="mini-stat"><span>Moy</span><strong>{{ typeData.mean.toFixed(2) }}</strong></div>
+                                        <div class="mini-stat"><span>Max</span><strong>{{ typeData.max }}</strong></div>
+                                    </div>
+
+                                    <div v-else-if="typeName === 'bool'" class="stat-col">
+                                        <div class="progress-bar">
+                                            <div class="progress-fill true-fill" :style="{width: typeData.true_percentage + '%'}"></div>
+                                        </div>
+                                        <div class="bool-legend">
+                                            <span class="text-true">Vrai: {{ typeData.true_count }}</span>
+                                            <span class="text-false">Faux: {{ typeData.false_count }}</span>
+                                        </div>
+                                    </div>
+
+                                    <div v-else-if="typeName === 'str'" class="stat-col">
+                                        <div class="sample-list">
+                                            <span v-for="(sample, idx) in typeData.sample_values" :key="idx" class="sample-tag">
+                                                "{{ sample }}"
+                                            </span>
+                                        </div>
+                                    </div>
+
+                                    <div v-else-if="['list', 'dict'].includes(typeName)" class="stat-row">
+                                        <div class="mini-stat"><span>Min Len</span><strong>{{ typeData.size_min }}</strong></div>
+                                        <div class="mini-stat"><span>Moy Len</span><strong>{{ typeData.size_mean.toFixed(1) }}</strong></div>
+                                        <div class="mini-stat"><span>Max Len</span><strong>{{ typeData.size_max }}</strong></div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -291,6 +365,8 @@ onMounted(() => fetchFiles())
 </template>
 
 <style scoped>
+/* Conserver le CSS précédent, il est toujours valide et adapté à la structure ci-dessus */
+/* Je ne le remets pas pour ne pas spammer, mais c'est le même que dans le message d'avant */
 .viewer-container {
     max-width: 1400px;
     margin: 0 auto;
@@ -333,6 +409,7 @@ onMounted(() => fetchFiles())
     gap: 20px;
 }
 
+/* --- CARDS & CONTROLS --- */
 .card {
     background: #1e1e1e;
     border-radius: 12px;
@@ -347,6 +424,7 @@ onMounted(() => fetchFiles())
     background: rgba(255, 255, 255, 0.02);
     display: flex;
     align-items: center;
+    justify-content: space-between; /* Important pour le bouton fermer */
     gap: 10px;
 }
 
@@ -371,6 +449,7 @@ onMounted(() => fetchFiles())
     opacity: 0.9;
 }
 
+/* --- INPUTS & BUTTONS --- */
 .input-normal {
     width: 100%;
     padding: 10px 12px;
@@ -418,44 +497,15 @@ onMounted(() => fetchFiles())
     transform: none;
 }
 
-.full-width {
-    width: 100%;
-}
+.full-width { width: 100%; }
+.btn-primary { background: #646cff; color: white; }
+.btn-secondary { background: #333; color: white; border: 1px solid #444; }
+.btn-info { background: #0ea5e9; color: white; }
+.btn-success { background: #10b981; color: white; padding: 10px; }
+.btn-sm { padding: 5px 12px; font-size: 0.8rem; }
+.btn-icon { background: none; border: none; color: #666; cursor: pointer; font-size: 1.2rem; }
 
-.btn-primary {
-    background: #646cff;
-    color: white;
-}
-
-.btn-secondary {
-    background: #333;
-    color: white;
-    border: 1px solid #444;
-}
-
-.btn-info {
-    background: #0ea5e9;
-    color: white;
-}
-
-.btn-success {
-    background: #10b981;
-    color: white;
-    padding: 10px;
-}
-
-.btn-sm {
-    padding: 5px 12px;
-    font-size: 0.8rem;
-}
-
-.btn-icon {
-    background: none;
-    border: none;
-    color: #666;
-    cursor: pointer;
-}
-
+/* --- PREVIEW & EXTRAS --- */
 .preview-mini {
     margin-top: 0;
     background: #000;
@@ -486,69 +536,207 @@ onMounted(() => fetchFiles())
     margin: 5px 0;
 }
 
-.save-group {
-    display: flex;
-    gap: 8px;
-}
+.save-group { display: flex; gap: 8px; }
+.tools-body { gap: 10px; }
+
+
+/* ========================================= */
+/* NOUVELLES STATISTIQUES (v2)          */
+/* ========================================= */
 
 .stats-panel {
     border-color: #646cff;
-}
-
-.flex-between {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
+    background: #1a1a1a;
+    margin-bottom: 20px;
 }
 
 .stats-content-wrapper {
     display: flex;
-    gap: 20px;
-    padding: 20px;
+    flex-direction: column;
+    padding: 30px;
+    gap: 40px; /* Espace entre le graph et la grille */
 }
 
-.chart-container {
-    flex: 0 0 150px;
-    height: 150px;
+/* 1. SECTION GRAPHIQUE CENTRÉE */
+.stats-top-section {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+}
+
+.chart-container-large {
     position: relative;
+    height: 300px;
+    width: 300px; /* Cercle parfait */
+    display: flex;
+    justify-content: center;
 }
 
-.stats-grid {
-    flex: 1;
+.chart-legend-large p {
+    margin-top: 20px;
+    color: #888;
+    font-size: 0.95rem;
+    text-align: center;
+}
+
+.divider-full {
+    height: 1px;
+    background: #333;
+    width: 100%;
+}
+
+/* 2. GRILLE DES CHAMPS */
+.fields-grid-full {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
-    gap: 10px;
-    align-content: flex-start;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 20px;
+    width: 100%;
 }
 
-.stat-item {
-    background: rgba(255, 255, 255, 0.03);
-    padding: 10px;
-    border-radius: 8px;
-    border: 1px solid rgba(255, 255, 255, 0.05);
+.field-card {
+    background: #252525;
+    border: 1px solid #333;
+    border-radius: 12px;
+    padding: 15px;
+    transition: transform 0.2s, box-shadow 0.2s;
+    display: flex;
+    flex-direction: column;
 }
 
-.stat-title {
-    color: #aaa;
-    font-size: 0.8rem;
-    margin-bottom: 5px;
+.field-card:hover {
+    border-color: #555;
+    transform: translateY(-3px);
+    box-shadow: 0 5px 15px rgba(0,0,0,0.3);
 }
 
-.metric {
-    font-size: 1rem;
+.field-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+    border-bottom: 1px solid #3d3d3d;
+    padding-bottom: 10px;
+}
+
+.field-name {
     font-weight: 700;
+    color: #fff;
+    font-size: 1.1rem;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.field-badges {
+    display: flex;
+    gap: 5px;
+    flex-shrink: 0;
+}
+
+.badge {
+    font-size: 0.75rem;
+    padding: 3px 8px;
+    border-radius: 4px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.badge-success { background: rgba(16, 185, 129, 0.15); color: #10b981; border: 1px solid rgba(16, 185, 129, 0.2); }
+.badge-danger { background: rgba(239, 68, 68, 0.15); color: #ef4444; border: 1px solid rgba(239, 68, 68, 0.2); }
+
+/* Blocs de Types */
+.types-container {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    flex: 1; 
+}
+
+.type-block {
+    background: rgba(0, 0, 0, 0.2);
+    padding: 12px;
+    border-radius: 8px;
+    font-size: 0.9rem;
+}
+
+.type-label {
+    color: #646cff;
+    font-weight: 700;
+    margin-bottom: 10px;
     display: block;
+    text-transform: uppercase;
+    font-size: 0.75rem;
+    letter-spacing: 1px;
 }
 
-.metric.valid {
-    color: #10b981;
+/* Lignes Statistiques (Number / List) */
+.stat-row {
+    display: flex;
+    justify-content: space-between;
+    background: rgba(255, 255, 255, 0.03);
+    padding: 8px 12px;
+    border-radius: 6px;
 }
 
-.metric.null {
-    color: #ef4444;
+.mini-stat {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    flex: 1;
+}
+
+.mini-stat span { font-size: 0.7rem; color: #888; margin-bottom: 4px; }
+.mini-stat strong { font-size: 1rem; color: #eee; font-weight: 600; }
+
+/* Colonnes Statistiques (Bool / Str) */
+.stat-col {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.progress-bar {
+    height: 8px;
+    background: #333;
+    border-radius: 4px;
+    overflow: hidden;
+    width: 100%;
+}
+
+.progress-fill.true-fill {
+    background: #10b981;
+    height: 100%;
+}
+
+.bool-legend {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.8rem;
+    padding: 0 2px;
+}
+
+.text-true { color: #10b981; font-weight: 600; }
+.text-false { color: #ef4444; font-weight: 600; }
+
+.sample-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+}
+
+.sample-tag {
+    background: #333;
+    padding: 4px 8px;
+    border-radius: 4px;
+    color: #ccc;
+    font-family: monospace;
     font-size: 0.85rem;
+    border: 1px solid #444;
 }
 
+/* --- TABLE DATA --- */
 .table-card {
     min-height: 400px;
     display: flex;
@@ -576,6 +764,7 @@ th {
     position: sticky;
     top: 0;
     white-space: nowrap;
+    z-index: 10;
 }
 
 th:hover {
@@ -602,6 +791,9 @@ tr:hover td {
     gap: 10px;
 }
 
+.sort-arrow { opacity: 0.3; }
+th:hover .sort-arrow { opacity: 1; }
+
 .pagination-footer {
     display: flex;
     justify-content: space-between;
@@ -611,15 +803,8 @@ tr:hover td {
     background: #1a1a1a;
 }
 
-.page-info {
-    font-size: 0.85rem;
-    color: #aaa;
-}
-
-.page-controls {
-    display: flex;
-    gap: 10px;
-}
+.page-info { font-size: 0.85rem; color: #aaa; }
+.page-controls { display: flex; gap: 10px; }
 
 .empty-state {
     flex: 1;
@@ -650,13 +835,11 @@ tr:hover td {
 }
 
 @keyframes rotation {
-    0% {
-        transform: rotate(0deg);
-    }
-    100% {
-        transform: rotate(360deg);
-    }
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
 }
+
+/* --- TOAST --- */
 .app-toast {
     position: fixed;
     bottom: 20px;
@@ -669,36 +852,18 @@ tr:hover td {
     z-index: 100;
 }
 
-.app-toast.success {
-    background: #10b981;
-}
+.app-toast.success { background: #10b981; }
+.app-toast.error { background: #ef4444; }
+.app-toast.info { background: #3b82f6; }
 
-.app-toast.error {
-    background: #ef4444;
-}
-
-.app-toast.info {
-    background: #3b82f6;
-}
-
+/* --- TRANSITIONS --- */
 .slide-up-enter-active,
-.slide-up-leave-active {
-    transition: all 0.3s ease;
-}
-
+.slide-up-leave-active { transition: all 0.3s ease; }
 .slide-up-enter-from,
-.slide-up-leave-to {
-    transform: translateY(20px);
-    opacity: 0;
-}
+.slide-up-leave-to { transform: translateY(20px); opacity: 0; }
 
 .fade-enter-active,
-.fade-leave-active {
-    transition: opacity 0.3s;
-}
-
+.fade-leave-active { transition: opacity 0.3s; }
 .fade-enter-from,
-.fade-leave-to {
-    opacity: 0;
-}
+.fade-leave-to { opacity: 0; }
 </style>
