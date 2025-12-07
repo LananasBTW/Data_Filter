@@ -1,0 +1,20 @@
+# Frontend Dockerfile
+FROM node:18-alpine
+
+WORKDIR /app
+
+# On copie d'abord les fichiers de dépendances pour profiter du cache Docker
+COPY frontend/package*.json .
+
+# Installation propre des dépendances
+RUN npm install
+
+# On copie le reste (le code source)
+COPY frontend/ .
+
+# On expose le port de Vite
+EXPOSE 5173
+
+# Commande de démarrage
+# --host est OBLIGATOIRE pour que Docker expose le site vers l'extérieur
+CMD ["npm", "run", "dev", "--", "--host"]
