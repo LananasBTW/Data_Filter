@@ -5,9 +5,17 @@
 Lien vers le wiki : [LananasBTW/Data_Filter/wiki](https://github.com/LananasBTW/Data_Filter/wiki)
 
 ## LANCER LE PROJET :
-```pwsh
+<!-- pas de dépendance pour le moment ```pwsh
 pip install -r requirements.txt
+``` -->
+```pwsh
 python main.py
+```
+```pwsh
+python3 main.py
+```
+```pwsh
+py main.py
 ```
 
 ## 📋 Description du Projet
