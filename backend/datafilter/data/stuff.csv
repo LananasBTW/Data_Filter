@@ -1,0 +1,18 @@
+id,name,category,quantity,price,status,date,supplier,warranty,color,size,weight,material,origin,discount
+1,Widget A,Electronics,150,29.99,Active,2024-01-15,Supplier X,2 years,Red,M,1.5kg,Plastic,USA,10%
+2,Gadget B,Electronics,87,49.99,Active,2024-01-16,Supplier Y,1 year,Blue,L,0.5kg,Metal,China,15%
+3,Cable C,Accessories,500,5.99,Active,2024-01-17,Supplier Z,6 months,Black,S,0.1kg,Rubber,India,5%
+4,Stand D,Accessories,45,19.99,Inactive,2024-01-18,Supplier X,1 year,Gray,M,1kg,Wood,USA,0%
+5,Power Bank E,Electronics,200,34.99,Active,2024-01-19,Supplier Y,2 years,White,L,0.3kg,Plastic,China,20%
+6,Screen Protector F,Accessories,1000,2.99,Active,2024-01-20,Supplier Z,6 months,Transparent,S,0.05kg,Glass,India,10%
+7,Charger G,Electronics,120,24.99,Active,2024-01-21,Supplier X,1 year,Black,M,0.2kg,Plastic,USA,5%
+8,Case H,Accessories,350,15.99,Active,2024-01-22,Supplier Y,2 years,Red,L,0.4kg,Silicone,China,15%
+9,Keyboard I,Electronics,60,79.99,Inactive,2024-01-23,Supplier Z,1 year,Black,L,1kg,Plastic,India,0%
+10,Mouse J,Electronics,95,39.99,Active,2024-01-24,Supplier X,2 years,Gray,S,0.15kg,Plastic,USA,10%
+11,Hub K,Electronics,30,89.99,Active,2024-01-25,Supplier Y,1 year,Black,M,0.3kg,Metal,China,5%
+12,Adapter L,Accessories,400,12.99,Active,2024-01-26,Supplier Z,6 months,White,S,0.1kg,Plastic,India,20%
+13,Mount M,Accessories,150,22.99,Active,2024-01-27,Supplier X,1 year,Gray,M,0.5kg,Metal,USA,0%
+14,Dock N,Electronics,25,129.99,Inactive,2024-01-28,Supplier Y,2 years,Black,L,1kg,Plastic,China,15%
+15,Strap O,Accessories,600,8.99,Active,2024-01-29,Supplier Z,6 months,Red,S,0.2kg,Rubber,India,10%
+16,Flash Drive P,Electronics,300,19.99,Active,2024-01-30,Supplier X,1 year,Blue,M,0.1kg,Plastic,USA,5%
+17,Tripod Q,Accessories,80,39.99,Active,2024-01-31,Supplier Y,2 years,Black,L,1.5kg,Metal,China,0%
